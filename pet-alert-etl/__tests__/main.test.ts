@@ -1,0 +1,1 @@
+'Init fichier de test';
