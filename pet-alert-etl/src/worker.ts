@@ -1,37 +1,32 @@
-import { writeFileSync } from 'fs';
+import { mkdirSync, writeFileSync } from 'fs';
 import { workerData, parentPort } from 'worker_threads';
 import fetch from 'node-fetch';
 import { URL } from 'url';
+import { addSearchParams } from './utils/url.js';
+import { CONFIG } from './config.js';
 
-const pageToFetchs = workerData.pageToFetchs[0];
-const workerId = workerData.workerId;
-const URL_TO_FETCH = 'https://monalerte.petalertfrance.com/api/alerts-page';
+interface WorkerData {
+  pageToFetchs: number[];
+  workerName: number;
+  name: string;
+  code: string;
+}
 
-const addSearchParams = (url: URL, params: Record<any, any>) =>
-  new URL(
-    `${url.origin}${url.pathname}?${new URLSearchParams([
-      ...Array.from(url.searchParams.entries()),
-      ...(Object.entries(params).map(([key, value]) => [
-        key,
-        value.toString(),
-      ]) as any),
-    ])}`,
-  );
+const { pageToFetchs, workerName, name, code }: WorkerData = workerData;
 
-const fetchAlertsByPage = async (page) => {
+const fetchAlertsByPage = async (page: number) => {
   const filters = {
     pageNumber: page,
-    dptName: 'loire-atlantique',
-    dptCode: '44',
+    dptName: name,
+    dptCode: code,
     animalType: 'chien',
     alertType: 'perdu',
   };
 
-  const URL_WITH_FILTERS = addSearchParams(new URL(URL_TO_FETCH), {
+  const urlWithFilters = addSearchParams(new URL(CONFIG.URL_TO_FETCH), {
     filters: JSON.stringify(filters),
   }).toString();
-
-  const response = await fetch(URL_WITH_FILTERS);
+  const response = await fetch(urlWithFilters);
   const alerts = await response.json();
   return alerts;
 };
@@ -39,10 +34,11 @@ const fetchAlertsByPage = async (page) => {
 (async () => {
   for (const page of pageToFetchs) {
     const alerts = await fetchAlertsByPage(page);
+    mkdirSync(`./data/${name}/`, { recursive: true });
     writeFileSync(
-      `./data/alerts-${page}.json`,
+      `./data/${name}/alerts-${page}.json`,
       JSON.stringify(alerts, null, 2),
     );
   }
-  parentPort.postMessage(workerId);
+  parentPort.postMessage(workerName);
 })();
