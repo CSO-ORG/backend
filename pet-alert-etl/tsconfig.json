@@ -1,16 +1,17 @@
 {
   "compilerOptions": {
-    "target": "es2022",
+    "target": "ESNext",
     "module": "ESNext",
-    "lib": ["ES2022"],
+    "lib": ["dom", "ESNext"],
     "skipLibCheck": true,
-    "moduleResolution": "node16",
+    "moduleResolution": "node",
     "rootDir": ".",
-    "outDir": "build",
+    "outDir": "./build",
     "allowSyntheticDefaultImports": true,
     "importHelpers": true,
     "alwaysStrict": true,
     "sourceMap": true,
+    "removeComments": true,
     "forceConsistentCasingInFileNames": true,
     "noFallthroughCasesInSwitch": true,
     "noImplicitReturns": true,
@@ -18,14 +19,11 @@
     "noUnusedParameters": true,
     "noImplicitAny": false,
     "noImplicitThis": false,
-    "strictNullChecks": false
-  },
-  "ts-node": {
-    // these options are overrides used only by ts-node
-    // same as the --compilerOptions flag and the TS_NODE_COMPILER_OPTIONS environment variable
-    "compilerOptions": {
-      "module": "ES6"
-    }
+    "emitDecoratorMetadata": true,
+    "experimentalDecorators": true,
+    "strictNullChecks": false,
+    "baseUrl": "./",
+    "incremental": true
   },
   "include": ["src/**/*", "__tests__/**/*"]
 }

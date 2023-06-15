@@ -9,6 +9,8 @@ import {
   colors,
   animals,
 } from 'unique-names-generator';
+import 'reflect-metadata';
+import { performance } from 'perf_hooks';
 
 const require = createRequire(import.meta.url);
 

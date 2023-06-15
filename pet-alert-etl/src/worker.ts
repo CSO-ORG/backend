@@ -1,8 +1,7 @@
 import { mkdirSync, writeFileSync } from 'fs';
 import { workerData, parentPort } from 'worker_threads';
 import fetch from 'node-fetch';
-import { URL } from 'url';
-import { addSearchParams } from './utils/url.js';
+import { addSearchParams } from '../src/utils/url.js';
 import { CONFIG } from './config.js';
 
 interface WorkerData {
