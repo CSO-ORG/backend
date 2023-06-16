@@ -1,3 +1,4 @@
+import { rmSync, writeFileSync } from 'fs';
 import { Worker } from 'worker_threads';
 import { createRequire } from 'module';
 import fetch from 'node-fetch';
@@ -11,6 +12,7 @@ import {
 } from 'unique-names-generator';
 import 'reflect-metadata';
 import { performance } from 'perf_hooks';
+import { readdirSync, readFileSync } from 'fs';
 
 const require = createRequire(import.meta.url);
 
@@ -40,6 +42,52 @@ const getCodeAndNameFromDepartement = (departement: string) => {
   const code = targetString.split(/-(.*)/s)[0];
   const name = targetString.split(/-(.*)/s)[1];
   return { code, name };
+};
+
+const mergeFiles = () => {
+  const dptFolders = readdirSync('./data').filter((e) => e !== '.keep');
+  for (const dptFolder of dptFolders) {
+    const files = readdirSync(`./data/${dptFolder}`).filter(
+      (e) => e !== 'merge.json' && e !== 'output.json',
+      //temp
+    );
+    const output = files.reduce((acc, file) => {
+      const fileContent = JSON.parse(
+        readFileSync(`./data/${dptFolder}/${file}`, 'utf8'),
+      );
+      return [...acc, ...fileContent];
+    }, []);
+
+    writeFileSync(`./data/${dptFolder}/merge.json`, JSON.stringify(output));
+  }
+};
+
+const sendFilesToGateway = () => {
+  const dptFolders = readdirSync('./data').filter((e) => e !== '.keep');
+  for (const dptFolder of dptFolders) {
+    const fileContent = JSON.parse(
+      readFileSync(`./data/${dptFolder}/merge.json`, 'utf8'),
+    );
+
+    while (fileContent.length > 0) {
+      const chunk = fileContent.splice(0, 500);
+      fetch(`https:gergre.free.beeceptor.com/alerts?dpt=${dptFolder}`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(chunk),
+      }).catch((e) => {
+        console.log(e);
+      });
+    }
+  }
+  deleteFiles();
+};
+
+const deleteFiles = () => {
+  const dptFolders = readdirSync('./data').filter((e) => e !== '.keep');
+  dptFolders.forEach((dir) => rmSync(dir, { recursive: true, force: true }));
 };
 
 const main = async () => {
@@ -125,6 +173,11 @@ const main = async () => {
   const end = performance.now();
   console.log('All workers are done');
   console.log(`Execution time: ${((end - start) / 1000).toFixed(2)} seconds`);
+  console.log('Start merging files');
+  mergeFiles();
+  console.log('All files are merged');
+  sendFilesToGateway();
+  console.log('All files are sent to gateway');
 };
 
 main();
