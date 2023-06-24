@@ -15,7 +15,7 @@
     "types": ["vitest/globals"],
     "baseUrl": ".",
     "paths": {
-      "@foo/*": ["src/foo/*"]
+      "@utils/*": ["src/utils/*"]
     }
   }
 }
