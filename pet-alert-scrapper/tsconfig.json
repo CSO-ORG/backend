@@ -15,7 +15,10 @@
     "types": ["vitest/globals"],
     "baseUrl": ".",
     "paths": {
-      "@utils/*": ["src/utils/*"]
+      "@utils/*": ["src/utils/*"],
+      "@interfaces/*": ["src/interfaces/*"],
+      "@workers/*": ["src/workers/*"],
+      "@services/*": ["src/services/*"]
     }
   }
 }
