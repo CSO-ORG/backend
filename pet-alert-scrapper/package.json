@@ -14,13 +14,13 @@
   },
   "types": "./dist/index.d.ts",
   "scripts": {
-    "build-fast": "tsup src/index.ts src/workers/index.ts --format cjs,esm",
+    "build-fast": "tsup src/index.ts src/workers/index.ts --format esm",
     "build:watch": "pnpm run build-fast --watch",
     "build:prod": "pnpm run build-fast --minify --dts-resolve",
     "build": "pnpm run build-fast",
     "start": "node dist/index.js",
     "start:watch": "nodemon  --watch dist --exec \"node dist/index.js\"",
-    "start:all": "pnpm run build && concffffurrently -n COMPILER,MAIN \"pnpm run build:watch\" \"pnpm run start:watch\"",
+    "start:all": "pnpm run build && concurrently -n COMPILER,MAIN \"pnpm run build:watch\" \"pnpm run start:watch\"",
     "test": "vitest run",
     "test:watch": "vitest",
     "test:coverage": "vitest run --coverage",
@@ -29,6 +29,7 @@
     "prepare": "husky install"
   },
   "devDependencies": {
+    "@types/node": "^20.3.1",
     "concurrently": "^8.2.0",
     "husky": "^8.0.0",
     "lint-staged": "^13.2.2",
@@ -39,10 +40,8 @@
     "vitest": "0.28.5"
   },
   "dependencies": {
-    "@types/node": "^20.3.1",
     "axios": "^1.4.0",
     "cheerio": "1.0.0-rc.12",
-    "node-fetch": "^3.3.1",
     "reflect-metadata": "^0.1.13",
     "unique-names-generator": "^4.7.1"
   }
