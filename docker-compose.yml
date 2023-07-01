@@ -1,0 +1,64 @@
+version: '3'
+services:
+  rabbitmq:
+    image: rabbitmq:3-management-alpine
+    container_name: rabbitmq
+    hostname: rabbitmq
+    volumes:
+      - /var/lib/rabbitmq
+    ports:
+      - '5672:5672'
+      - '15672:15672'
+    env_file:
+      ./gateway/.env
+    healthcheck:
+      test: rabbitmq-diagnostics -q ping
+      interval: 30s
+      timeout: 30s
+      retries: 3
+  gateway:
+    build:
+      dockerfile: Dockerfile
+      context: ./gateway
+    restart: always
+    depends_on:
+      rabbitmq:
+        condition: service_healthy
+    ports:
+      - 8080:8080
+    env_file:
+      - ./gateway/.env
+    volumes:
+      - /usr/src/app/node_modules
+      - /usr/src/app/dist
+      - ./gateway:/usr/src/app
+  account-service:
+    build:
+      dockerfile: Dockerfile
+      context: ./account-service
+    restart: always
+    env_file:
+      - ./account-service/.env
+    depends_on:
+      account-service-db:
+        condition: service_healthy
+      rabbitmq:
+        condition: service_healthy
+    volumes:
+      - /usr/src/app/node_modules
+      - /usr/src/app/dist
+      - ./account-service:/usr/src/app
+  account-service-db:
+    image: postgres:15.2
+    restart: always
+    ports:
+      - 5432:5432
+    env_file:
+      - ./account-service/.env
+    volumes:
+      - ./db_dumps/account_service_dump/pgdataprod:/var/lib/postgresql/data
+    healthcheck:
+      test: [ "CMD-SHELL", "pg_isready -U postgres" ]
+      timeout: 45s
+      interval: 10s
+      retries: 10
