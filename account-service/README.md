@@ -1,0 +1,1 @@
+# DOC AUTH SERVICE

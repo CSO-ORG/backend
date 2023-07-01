@@ -2,7 +2,9 @@ import { Injectable } from '@nestjs/common';
 
 @Injectable()
 export class AppService {
-  getHello(): string {
-    return 'Hello World!';
+  getWelcomeMessage(): { message: string } {
+    return {
+      message: 'CSO API v' + process.env.APP_VERSION,
+    };
   }
 }

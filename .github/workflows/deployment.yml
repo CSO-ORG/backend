@@ -1,0 +1,31 @@
+name: Deployment
+
+on:
+  push:
+    branches: ["main"]
+jobs:
+  deploy:
+    name: Deploy latest changes
+    runs-on: ubuntu-latest
+    steps:
+      - name: Pulling latest updates
+        uses: appleboy/ssh-action@v0.1.6
+        with:
+          host: ${{ secrets.SSH_HOST }}
+          username: ${{ secrets.SSH_USERNAME }}
+          password: ${{ secrets.SSH_PASSWORD }}
+          script: |
+            cd besitter_app
+            git pull origin main
+      - name: Deploying changes
+        uses: appleboy/ssh-action@v0.1.6
+        with:
+          host: ${{ secrets.SSH_HOST }}
+          username: ${{ secrets.SSH_USERNAME }}
+          password: ${{ secrets.SSH_PASSWORD }}
+          script: |
+            cd besitter_app
+            docker-compose stop
+            docker-compose down
+            docker system prune -f
+            docker-compose up --build -d
