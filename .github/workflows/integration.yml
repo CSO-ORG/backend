@@ -1,0 +1,39 @@
+name: Integration
+
+on:
+  pull_request:
+    branches: ["develop"]
+
+jobs:
+  checklint-gateway:
+    runs-on: ubuntu-latest
+    container: node:19
+    steps:
+      - run: node --version
+      - run: npm --version
+      - uses: actions/checkout@v3
+      - run: cd ./gateway && npm i && npm run lint
+  checklint-account-service:
+    runs-on: ubuntu-latest
+    container: node:19
+    steps:
+      - run: node --version
+      - run: npm --version
+      - uses: actions/checkout@v3
+      - run: cd ./account-service && npm i && npm run lint
+  build-gateway:
+    runs-on: ubuntu-latest
+    container: node:19
+    steps:
+      - run: node --version
+      - run: npm --version
+      - uses: actions/checkout@v3
+      - run: cd ./gateway && npm i && npm run build
+  build-account-service:
+    runs-on: ubuntu-latest
+    container: node:19
+    steps:
+      - run: node --version
+      - run: npm --version
+      - uses: actions/checkout@v3
+      - run: cd ./account-service && npm i && npm run build
