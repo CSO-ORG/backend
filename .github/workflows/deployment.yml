@@ -15,7 +15,7 @@ jobs:
           username: ${{ secrets.SSH_USERNAME }}
           password: ${{ secrets.SSH_PASSWORD }}
           script: |
-            cd besitter_app
+            cd backend
             git pull origin main
       - name: Deploying changes
         uses: appleboy/ssh-action@v0.1.6
@@ -24,7 +24,7 @@ jobs:
           username: ${{ secrets.SSH_USERNAME }}
           password: ${{ secrets.SSH_PASSWORD }}
           script: |
-            cd besitter_app
+            cd backend
             docker-compose stop
             docker-compose down
             docker system prune -f
