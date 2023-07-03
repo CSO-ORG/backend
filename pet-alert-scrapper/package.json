@@ -20,7 +20,7 @@
     "build": "pnpm run build-fast",
     "start": "node dist/index.js",
     "start:watch": "nodemon  --watch dist --exec \"node dist/index.js\"",
-    "start:all": "pnpm run build && concurrently -n COMPILER,MAIN \"pnpm run build:watch\" \"pnpm run start:watch\"",
+    "start:all": "pnpm run build && concffffurrently -n COMPILER,MAIN \"pnpm run build:watch\" \"pnpm run start:watch\"",
     "test": "vitest run",
     "test:watch": "vitest",
     "test:coverage": "vitest run --coverage",

@@ -8,7 +8,7 @@ export const getNumberOfAlert = ($: cheerio.CheerioAPI): number => {
 export const getPetAlertsDepartementsLinks = (
 	$: cheerio.CheerioAPI,
 ): string[] => {
-	const links = [...$('a.url-link')]
+	const dogLinks = [...$('a.url-link')]
 		.map(
 			(e: cheerio.Element) =>
 				$(e)
@@ -18,6 +18,9 @@ export const getPetAlertsDepartementsLinks = (
 					)?.[0],
 		)
 		.filter((link): link is string => !!link);
+
+	const catLinks = dogLinks.map((link) => link.replace('chien', 'chat'));
+	const links = [...dogLinks, ...catLinks];
 
 	if (!links) throw new Error('Aucun lien de département trouvé');
 

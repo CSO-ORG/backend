@@ -1,3 +1,4 @@
+import { WorkerData } from '@interfaces/index';
 import { CONFIG } from '@workers/config';
 import { Worker } from 'worker_threads';
 
@@ -6,14 +7,15 @@ export const getNumberOfPagesFromAlertNumber = (results: number) => {
 	return numberOfPages;
 };
 
-export const getCodeAndNameFromDepartement = (departement: string) => {
+export const getInfoFromDepartementLink = (departement: string) => {
 	const targetStringSplitted = departement.split('/');
 	const targetString = targetStringSplitted[
 		targetStringSplitted.length - 1
 	].replace('pet-alert-', '');
 	const code = targetString.split(/-(.*)/s)[0];
 	const name = targetString.split(/-(.*)/s)[1];
-	return { code, name };
+	const animal = departement.includes('chien') ? 'chien' : 'chat';
+	return { code, name, animal: animal as 'chien' | 'chat' };
 };
 
 export const invokeWorker = (
@@ -22,6 +24,7 @@ export const invokeWorker = (
 	sitePages: number,
 	currentWorker: string,
 	indexRefence: number,
+	animal: 'chien' | 'chat',
 ) => {
 	return new Worker('./dist/workers/index.js', {
 		execArgv:
@@ -36,6 +39,7 @@ export const invokeWorker = (
 			workerName: currentWorker,
 			name,
 			code,
-		},
+			animal,
+		} satisfies WorkerData,
 	});
 };
