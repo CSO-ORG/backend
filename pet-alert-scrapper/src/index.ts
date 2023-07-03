@@ -1,5 +1,5 @@
 import {
-	getCodeAndNameFromDepartement,
+	getInfoFromDepartementLink,
 	getNumberOfAlert,
 	getNumberOfPagesFromAlertNumber,
 	getPetAlertsDepartementsLinks,
@@ -24,6 +24,7 @@ try {
 		await axios(CONFIG.URL_TO_SCRAPE).then((res) => res.data),
 	);
 
+	// INCLUDE DOG AND CAT
 	const petAlertsDepartementsLinks = getPetAlertsDepartementsLinks($);
 
 	const start = performance.now();
@@ -34,8 +35,6 @@ try {
 			await delay(1000);
 			continue;
 		}
-
-		logger.debug(activeWorkers.size.toString());
 
 		logger.info(
 			`Remaining ${
@@ -66,15 +65,15 @@ try {
 				}
 			}
 
-			logger.info(
-				`[START] - [worker - ${currentWorker}] on ${url.split('/').pop()}`,
-			);
-
 			const $ = cheerio.load(await axios(url).then((res) => res.data));
 			const numberOfAlerts = getNumberOfAlert($);
 			const sitePages = getNumberOfPagesFromAlertNumber(numberOfAlerts);
 
-			const { code, name } = getCodeAndNameFromDepartement(url);
+			const { code, name, animal } = getInfoFromDepartementLink(url);
+
+			logger.info(
+				`[START] - [worker - ${currentWorker}] on ${name} for ${animal}`,
+			);
 
 			const worker = invokeWorker(
 				code,
@@ -82,12 +81,13 @@ try {
 				sitePages,
 				currentWorker as string,
 				i,
+				animal,
 			);
 
 			worker.on('error', (err: unknown) => {
 				if (err instanceof Error && err.message === 'Gateway Timeout') {
-					petAlertsLinksUnvisited.push(url);
 					activeWorkers.delete(currentWorker as string);
+					petAlertsLinksUnvisited.push(url);
 					logger.error(
 						`[STOP] [worker - ${currentWorker} on ${url
 							.split('/')
@@ -99,9 +99,7 @@ try {
 			worker.on('message', (workerName: string) => {
 				activeWorkers.delete(workerName);
 				logger.info(
-					`[STOP] [worker - ${workerName} on ${url
-						.split('/')
-						.pop()}] is done. Get ${sitePages} pages with ${numberOfAlerts} alerts.`,
+					`[STOP] [worker - ${workerName} on ${name} for ${animal}] is done. Get ${sitePages} pages with ${numberOfAlerts} alerts.`,
 				);
 			});
 		}

@@ -1,6 +1,7 @@
 export interface WorkerData {
 	pageToFetchs: number[];
-	workerName: number;
+	workerName: string;
 	name: string;
 	code: string;
+	animal: 'chien' | 'chat';
 }

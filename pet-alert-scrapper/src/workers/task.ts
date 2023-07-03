@@ -1,17 +1,19 @@
-import { CONFIG } from './config';
+import { PetAlertApiFilters } from '@interfaces/index';
 import { addQueryToUrl } from '@utils/index';
 import axios from 'axios';
+import { CONFIG } from './config';
 
 export const fetchAlertsByPage = async (
 	page: number,
 	code: string,
 	name: string,
+	animal: 'chien' | 'chat',
 ) => {
-	const filters = {
+	const filters: PetAlertApiFilters = {
 		pageNumber: page,
 		dptName: name,
 		dptCode: code,
-		animalType: 'chien',
+		animalType: animal,
 		alertType: 'perdu',
 	};
 
