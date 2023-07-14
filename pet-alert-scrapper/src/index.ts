@@ -22,7 +22,12 @@ server.listen(process.env.PORT || 3000);
 
 logger.info(`Server is running on ${process.env.PORT || 3000}`);
 
-async function launchScrap(_req: http.IncomingMessage, res: http.ServerResponse) {
+async function launchScrap(req: http.IncomingMessage, res: http.ServerResponse) {
+	if (req.url !== '/start-scraping' || req.method !== 'GET') {
+		sendResponseToRequest(res, 404, 'Route not found');
+		return;
+	}
+
 	try {
 		if (isRunning) {
 			sendResponseToRequest(res, 400, 'Scrapping already running. Wait for it.');
@@ -89,6 +94,7 @@ async function launchScrap(_req: http.IncomingMessage, res: http.ServerResponse)
 						logger.error(`[STOP] [worker - ${currentWorker} on ${url.split('/').pop()}] KO. Gateway Timeout ! Retry incoming...`);
 					}
 
+					activeWorkers.delete(currentWorker as string);
 					logger.error(err);
 				});
 
