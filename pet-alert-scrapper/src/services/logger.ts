@@ -38,6 +38,9 @@ const transport = pino.transport({
 	dedupe: true,
 });
 
+/**
+ * Logger instance (pino)
+ */
 export const logger = pino(
 	{
 		level: 'trace',

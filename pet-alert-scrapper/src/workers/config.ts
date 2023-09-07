@@ -1,9 +1,4 @@
-import {
-	adjectives,
-	animals,
-	colors,
-	uniqueNamesGenerator,
-} from 'unique-names-generator';
+import { adjectives, animals, colors, uniqueNamesGenerator } from 'unique-names-generator';
 
 export const CONFIG = {
 	URL_TO_FETCH: 'https://monalerte.petalertfrance.com/api/alerts-page',
