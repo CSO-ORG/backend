@@ -2,6 +2,7 @@ import { Module, ValidationPipe } from '@nestjs/common';
 import { ConfigModule } from '@nestjs/config';
 import { APP_PIPE } from '@nestjs/core';
 import { AccountServiceModule } from './account-service/account-service.module';
+import { AlertServiceModule } from './alert-service/alert-service.module';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { HealthModule } from './health/health.module';
@@ -13,6 +14,7 @@ import { HealthModule } from './health/health.module';
     }),
     AccountServiceModule,
     HealthModule,
+    AlertServiceModule,
   ],
   controllers: [AppController],
   providers: [

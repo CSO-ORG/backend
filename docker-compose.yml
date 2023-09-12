@@ -1,5 +1,6 @@
-version: '3'
+version: "3"
 services:
+  # RABBITMQ
   rabbitmq:
     image: rabbitmq:3-management-alpine
     container_name: rabbitmq
@@ -7,15 +8,16 @@ services:
     volumes:
       - /var/lib/rabbitmq
     ports:
-      - '5672:5672'
-      - '15672:15672'
-    env_file:
-      ./gateway/.env
+      - "5672:5672"
+      - "15672:15672"
+    env_file: ./gateway/.env
     healthcheck:
       test: rabbitmq-diagnostics -q ping
       interval: 30s
       timeout: 30s
       retries: 3
+
+  # GATEWAY
   gateway:
     build:
       dockerfile: Dockerfile
@@ -32,6 +34,8 @@ services:
       - /usr/src/app/node_modules
       - /usr/src/app/dist
       - ./gateway:/usr/src/app
+
+  # ACCOUNT-SERVICE
   account-service:
     build:
       dockerfile: Dockerfile
@@ -58,7 +62,52 @@ services:
     volumes:
       - ./db_dumps/account_service_dump/pgdataprod:/var/lib/postgresql/data
     healthcheck:
-      test: [ "CMD-SHELL", "pg_isready -U postgres" ]
+      test: ["CMD-SHELL", "pg_isready -U postgres"]
       timeout: 45s
       interval: 10s
       retries: 10
+
+  # ALERT-SERVICE
+  alert-service:
+    build:
+      dockerfile: Dockerfile
+      context: ./alert-service
+    restart: always
+    env_file:
+      - ./alert-service/.env
+    depends_on:
+      alert-service-db:
+        condition: service_healthy
+      rabbitmq:
+        condition: service_healthy
+    volumes:
+      - /usr/src/app/node_modules
+      - /usr/src/app/dist
+      - ./alert-service:/usr/src/app
+  alert-service-db:
+    image: postgres:15.2
+    restart: always
+    ports:
+      - 5433:5432
+    env_file:
+      - ./alert-service/.env
+    volumes:
+      - ./db_dumps/alert_service_dump/pgdataprod:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres"]
+      timeout: 45s
+      interval: 10s
+      retries: 10
+
+  # PET-ALERT-SCRAPER
+  pet-alert-scraper:
+    build:
+      dockerfile: Dockerfile
+      context: ./pet-alert-scrapper
+    restart: always
+    ports:
+      - 3000:3000
+    volumes:
+      - /usr/src/app/node_modules
+      - /usr/src/app/dist
+      - ./pet-alert-scrapper:/usr/src/app

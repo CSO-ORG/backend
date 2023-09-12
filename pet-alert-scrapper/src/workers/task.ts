@@ -1,17 +1,22 @@
-import { CONFIG } from './config';
+import { PetAlertApiFilters, PetAlertJson } from '@interfaces/index';
 import { addQueryToUrl } from '@utils/index';
 import axios from 'axios';
+import { CONFIG } from './config';
 
-export const fetchAlertsByPage = async (
-	page: number,
-	code: string,
-	name: string,
-) => {
-	const filters = {
+/**
+ * Fetch alerts from petalert API with filters
+ * @param page page number to fetch
+ * @param code departement code
+ * @param name departement name
+ * @param animal animal type
+ * @returns alerts from petalert API
+ */
+export const fetchAlertsByPage = async (page: number, code: string, name: string, animal: 'chien' | 'chat'): Promise<PetAlertJson[]> => {
+	const filters: PetAlertApiFilters = {
 		pageNumber: page,
 		dptName: name,
 		dptCode: code,
-		animalType: 'chien',
+		animalType: animal,
 		alertType: 'perdu',
 	};
 
@@ -19,6 +24,6 @@ export const fetchAlertsByPage = async (
 		filters: JSON.stringify(filters),
 	}).toString();
 	const response = await axios(urlWithFilters);
-	const alerts = await response.data;
+	const alerts: PetAlertJson[] = await response.data;
 	return alerts;
 };
