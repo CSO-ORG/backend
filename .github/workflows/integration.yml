@@ -21,6 +21,14 @@ jobs:
       - run: npm --version
       - uses: actions/checkout@v3
       - run: cd ./account-service && npm i && npm run lint
+  checklint-alert-service:
+    runs-on: ubuntu-latest
+    container: node:19
+    steps:
+      - run: node --version
+      - run: npm --version
+      - uses: actions/checkout@v3
+      - run: cd ./alert-service && npm i && npm run lint
   build-gateway:
     runs-on: ubuntu-latest
     container: node:19
@@ -37,3 +45,11 @@ jobs:
       - run: npm --version
       - uses: actions/checkout@v3
       - run: cd ./account-service && npm i && npm run build
+  build-alert-service:
+    runs-on: ubuntu-latest
+    container: node:19
+    steps:
+      - run: node --version
+      - run: npm --version
+      - uses: actions/checkout@v3
+      - run: cd ./alert-service && npm i && npm run build

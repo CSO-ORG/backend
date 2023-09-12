@@ -40,6 +40,7 @@
     "vitest": "0.28.5"
   },
   "dependencies": {
+    "@cso-org/shared": "^1.0.15",
     "axios": "^1.4.0",
     "cheerio": "1.0.0-rc.12",
     "pino": "^8.14.1",

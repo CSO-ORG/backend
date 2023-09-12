@@ -1,4 +1,7 @@
 .DS_Store
 /db_dumps/account_service_dump/pgdata
 /db_dumps/account_service_dump/pgdataprod
+/db_dumps/alert_service_dump/pgdata
+/db_dumps/alert_service_dump/pgdataprod
+
 

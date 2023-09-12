@@ -1,4 +1,7 @@
-import { ACCOUNT_SERVICE_MESSAGE_PATTERN } from '@cso-org/shared';
+import {
+  ACCOUNT_SERVICE_MESSAGE_PATTERN,
+  ALERT_SERVICE_MESSAGE_PATTERN,
+} from '@cso-org/shared';
 import { Controller, Get, Inject } from '@nestjs/common';
 import { ClientProxy } from '@nestjs/microservices';
 import { ApiTags } from '@nestjs/swagger';
@@ -14,6 +17,7 @@ export class HealthController {
     private health: HealthCheckService,
     private gatewayHealthIndicator: GatewayHealthIndicator,
     @Inject('ACCOUNT_SERVICE') private accountServiceClient: ClientProxy,
+    @Inject('ALERT_SERVICE') private alertServiceClient: ClientProxy,
   ) {}
 
   @Get('/gateway')
@@ -29,6 +33,23 @@ export class HealthController {
       .send(
         {
           cmd: ACCOUNT_SERVICE_MESSAGE_PATTERN.HEALTHCHECK,
+        },
+        {},
+      )
+      .pipe(
+        catchError((err) => {
+          return handleError(err);
+        }),
+      );
+  }
+
+  @Get('/alert-service')
+  @HealthCheck()
+  checkAlertService() {
+    return this.alertServiceClient
+      .send(
+        {
+          cmd: ALERT_SERVICE_MESSAGE_PATTERN.HEALTHCHECK,
         },
         {},
       )

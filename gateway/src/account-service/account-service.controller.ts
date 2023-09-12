@@ -45,7 +45,7 @@ import { UserOutputDto } from './dtos/output/user.output.dto';
 
 @ApiTags('account service')
 @Controller({
-  path: '/account',
+  path: '/account-svc',
 })
 export class AccountServiceController {
   constructor(
