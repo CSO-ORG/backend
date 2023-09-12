@@ -1,4 +1,4 @@
-import { ACCOUNT_TYPE, PROFILE_PICTURE } from '@cso-org/shared';
+import { ACCOUNT_TYPE, IPROFILE_PICTURE } from '@cso-org/shared';
 import { ApiProperty } from '@nestjs/swagger';
 import { Expose } from 'class-transformer';
 
@@ -22,7 +22,7 @@ export class UserOutputDto {
     default: 'http://cso-org.fr',
   })
   @Expose()
-  profilePicture: PROFILE_PICTURE;
+  profilePicture: IPROFILE_PICTURE;
   @ApiProperty({
     type: String,
     description: "user's account type",

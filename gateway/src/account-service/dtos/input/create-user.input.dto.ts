@@ -1,4 +1,4 @@
-import { ACCOUNT_TYPE, PROFILE_PICTURE } from '@cso-org/shared';
+import { ACCOUNT_TYPE, IPROFILE_PICTURE } from '@cso-org/shared';
 import { ApiProperty } from '@nestjs/swagger';
 import {
   IsEnum,
@@ -44,7 +44,7 @@ export class CreateUserInputDto {
     default: 'http://cso-org.fr',
   })
   @IsOptional()
-  profilePicture: PROFILE_PICTURE;
+  profilePicture: IPROFILE_PICTURE;
 
   @ApiProperty({
     type: String,

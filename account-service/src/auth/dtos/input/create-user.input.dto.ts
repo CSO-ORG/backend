@@ -1,4 +1,4 @@
-import { ACCOUNT_TYPE, PROFILE_PICTURE } from '@cso-org/shared';
+import { ACCOUNT_TYPE, IPROFILE_PICTURE } from '@cso-org/shared';
 import {
   IsEnum,
   IsJWT,
@@ -24,7 +24,7 @@ export class CreateUserInputDto {
   username: string;
 
   @IsOptional()
-  profilePicture: PROFILE_PICTURE;
+  profilePicture: IPROFILE_PICTURE;
 
   @IsString()
   @IsNotEmpty()

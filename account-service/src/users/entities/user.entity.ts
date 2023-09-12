@@ -1,4 +1,4 @@
-import { ACCOUNT_TYPE, PROFILE_PICTURE } from '@cso-org/shared';
+import { ACCOUNT_TYPE, IPROFILE_PICTURE } from '@cso-org/shared';
 import {
   AfterInsert,
   AfterRemove,
@@ -39,7 +39,7 @@ export class User {
     type: 'varchar',
     nullable: true,
   })
-  profilePicture: PROFILE_PICTURE;
+  profilePicture: IPROFILE_PICTURE;
 
   @Column({ name: 'password', type: 'varchar', length: 200, nullable: false })
   password: string;
