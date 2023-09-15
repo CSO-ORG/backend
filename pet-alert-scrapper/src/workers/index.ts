@@ -1,9 +1,9 @@
+import { fetchAlertsByPage } from './task';
 import { WorkerData } from '@interfaces/index';
 import { logger } from '@services/logger';
+import { convertPetAlertToAlert } from '@services/scrapper';
 import { mkdirSync, writeFileSync } from 'fs';
 import { parentPort, workerData } from 'worker_threads';
-import { fetchAlertsByPage } from './task';
-import { convertPetAlertToAlert } from '@services/scrapper';
 
 const { pageToFetchs, workerName, name, code, animal }: WorkerData = workerData;
 
