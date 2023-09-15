@@ -1,6 +1,6 @@
+import { sendResponseToRequest } from './server';
 import http from 'http';
 import { describe, expect, it, vi } from 'vitest';
-import { sendResponseToRequest } from './server';
 
 describe('server', () => {
 	describe('sendResponseToRequest', () => {

@@ -1,14 +1,14 @@
+import { PetAlertApiFilters } from '@interfaces/api';
+import { PetAlertJSON } from '@interfaces/worker';
 import {
 	getInfoFromDepartementLink,
-	getNumberOfAlert,
-	getNumberOfPagesFromAlertNumber,
 	getPetAlertsDepartementsLinks,
 	invokeWorker,
 	logger,
 	mergeFiles,
 	sendFilesToGateway,
 } from '@services/index';
-import { delay, sendResponseToRequest } from '@utils/index';
+import { addQueryToUrl, delay, sendResponseToRequest } from '@utils/index';
 import { CONFIG, WORKERS_NAME } from '@workers/config';
 import axios from 'axios';
 import * as cheerio from 'cheerio';
@@ -76,16 +76,25 @@ async function launchScrap(req: http.IncomingMessage, res: http.ServerResponse) 
 						break;
 					}
 				}
-
-				const $ = cheerio.load(await axios(url).then((res) => res.data));
-				const numberOfAlerts = getNumberOfAlert($);
-				const sitePages = getNumberOfPagesFromAlertNumber(numberOfAlerts);
-
 				const { code, name, animal } = getInfoFromDepartementLink(url);
+
+				const targetSpecificAnimalTypeUrl = `${animal}-perdu/pet-alert-${code}-${name}`;
+				const filters: PetAlertApiFilters = {
+					page: 1,
+					type: 'lost',
+				};
+				const urlWithFilters = addQueryToUrl(new URL(CONFIG.URL_TO_FETCH + targetSpecificAnimalTypeUrl), {
+					filters: JSON.stringify(filters),
+				}).toString();
+				const response = await axios(urlWithFilters);
+				const alerts: PetAlertJSON = response.data;
+
+				const sitePages = alerts.results.pageTotal;
+				const totalAlerts = alerts.results.itemsTotal;
 
 				logger.info(`[START] - [worker - ${currentWorker}] on ${name} for ${animal}`);
 
-				const worker = invokeWorker(code, name, sitePages, currentWorker as string, i, animal);
+				const worker = invokeWorker(code, name, sitePages, currentWorker as string, animal);
 
 				worker.on('error', (err: unknown) => {
 					if (err instanceof Error && err.message === 'Gateway Timeout') {
@@ -101,7 +110,7 @@ async function launchScrap(req: http.IncomingMessage, res: http.ServerResponse) 
 				worker.on('message', (workerName: string) => {
 					activeWorkers.delete(workerName);
 					logger.info(
-						`[STOP] [worker - ${workerName} on ${name} for ${animal}] is done. Get ${sitePages} pages with ${numberOfAlerts} alerts.`,
+						`[STOP] [worker - ${workerName} on ${name} for ${animal}] is done. Get ${sitePages} pages with ${totalAlerts} alerts.`,
 					);
 				});
 			}
