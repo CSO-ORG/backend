@@ -280,5 +280,5 @@ export class CreateAlert2InputDto {
   })
   @IsString()
   @IsOptional()
-  dateTime: string;
+  date: string;
 }
