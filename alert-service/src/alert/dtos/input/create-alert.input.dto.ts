@@ -140,5 +140,6 @@ export class CreateAlertInputDto {
   location: ILOCATION;
 
   @IsString()
-  dateTime: string;
+  @IsOptional()
+  date: string;
 }

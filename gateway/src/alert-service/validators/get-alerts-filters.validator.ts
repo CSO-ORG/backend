@@ -15,12 +15,21 @@ export class IsValidGetAlertsFiltersConstraint
       return false;
     }
 
-    const expectedProperties: string[] = ['alertType'];
+    const type = args.constraints[0]?.context?.type ?? 'getAll';
 
-    for (const prop of expectedProperties) {
-      if (!(prop in filters)) {
-        return false;
-      }
+    const hasSearchText = 'searchText' in filters;
+    const hasAlertType = 'alertType' in filters;
+
+    if (Object.keys(filters).length === 0) {
+      return false;
+    }
+
+    if (type === 'search' && !hasSearchText) {
+      return false;
+    }
+
+    if (type === 'getAll' && !hasAlertType) {
+      return false;
     }
 
     return true;
@@ -37,7 +46,7 @@ export function IsValidGetAlertsFilters(validationOptions?: ValidationOptions) {
       target: object.constructor,
       propertyName: propertyName,
       options: validationOptions,
-      constraints: [],
+      constraints: [validationOptions],
       validator: IsValidGetAlertsFiltersConstraint,
     });
   };

@@ -28,7 +28,7 @@ import { IsValidLocation } from 'src/alert-service/validators/location.validator
 import { IsNameRequired } from 'src/alert-service/validators/name-required.validator';
 import { IsPhoneNumberRequired } from 'src/alert-service/validators/phone-number-required.validator';
 
-export class CreateAlertInputDto {
+export class UpdateAlertInputDto {
   @ApiProperty({
     type: String,
     description: "alert's publisher ID",
@@ -36,6 +36,7 @@ export class CreateAlertInputDto {
   })
   @IsString()
   @IsNotEmpty()
+  @IsOptional()
   publisherId: string;
 
   @ApiProperty({
@@ -44,6 +45,7 @@ export class CreateAlertInputDto {
     default: '+33000000',
   })
   @IsPhoneNumberRequired()
+  @IsOptional()
   publisherPhoneNumber: string;
 
   @ApiProperty({
@@ -52,6 +54,7 @@ export class CreateAlertInputDto {
     default: 'johndoe@xxx.xx',
   })
   @IsEmailRequired()
+  @IsOptional()
   publisherEmail: string;
 
   @ApiProperty({
@@ -61,6 +64,7 @@ export class CreateAlertInputDto {
   })
   @IsBoolean()
   @IsNotEmpty()
+  @IsOptional()
   isFromAppUser: boolean;
 
   @ApiProperty({
@@ -69,6 +73,7 @@ export class CreateAlertInputDto {
     default: 'trump',
   })
   @IsNameRequired()
+  @IsOptional()
   name: string;
 
   @ApiProperty({
@@ -79,6 +84,7 @@ export class CreateAlertInputDto {
   @IsString()
   @MaxLength(30000)
   @IsNotEmpty()
+  @IsOptional()
   description: string;
 
   @ApiProperty({
@@ -89,6 +95,7 @@ export class CreateAlertInputDto {
   })
   @IsEnum(ALERT_STATUS)
   @IsNotEmpty()
+  @IsOptional()
   status: ALERT_STATUS;
 
   @ApiProperty({
@@ -99,6 +106,7 @@ export class CreateAlertInputDto {
   })
   @IsEnum(ALERT_CATEGORY)
   @IsNotEmpty()
+  @IsOptional()
   alertType: ALERT_CATEGORY;
 
   @ApiProperty({
@@ -108,6 +116,7 @@ export class CreateAlertInputDto {
   })
   @IsString()
   @MaxLength(100)
+  @IsOptional()
   @IsOptional()
   icadIdentifier: string;
 
@@ -119,6 +128,7 @@ export class CreateAlertInputDto {
   })
   @IsEnum(PET_CATEGORY)
   @IsNotEmpty()
+  @IsOptional()
   petType: PET_CATEGORY;
 
   @ApiProperty({
@@ -289,6 +299,7 @@ export class CreateAlertInputDto {
     },
   })
   @IsValidLocation()
+  @IsOptional()
   location: ILOCATION;
 
   @ApiProperty({
@@ -297,5 +308,6 @@ export class CreateAlertInputDto {
     default: '01/01/2023',
   })
   @IsString()
+  @IsOptional()
   date: string;
 }

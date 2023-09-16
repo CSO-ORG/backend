@@ -215,11 +215,11 @@ export class Alert {
   location: ILOCATION;
 
   @Column({
-    name: 'date_time',
+    name: 'date',
     type: 'varchar',
     nullable: true,
   })
-  dateTime: string;
+  date: string;
 
   @CreateDateColumn({
     name: 'created_at',

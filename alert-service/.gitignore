@@ -14,6 +14,8 @@ lerna-debug.log*
 # ENV
 .env
 
+*.crt
+
 # Migrations
 /migrations/*.js
 
