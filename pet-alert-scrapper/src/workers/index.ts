@@ -1,16 +1,19 @@
+import { fetchAlertsByPage } from './task';
 import { WorkerData } from '@interfaces/index';
 import { logger } from '@services/logger';
+import { convertPetAlertToAlert } from '@services/scrapper';
 import { mkdirSync, writeFileSync } from 'fs';
 import { parentPort, workerData } from 'worker_threads';
-import { fetchAlertsByPage } from './task';
 
 const { pageToFetchs, workerName, name, code, animal }: WorkerData = workerData;
 
 for (const page of pageToFetchs) {
-	const alerts = await fetchAlertsByPage(page, code, name, animal).catch((err) => {
+	const petAlerts = await fetchAlertsByPage(page, code, name, animal).catch((err) => {
 		if (err.response.status === 504) throw new Error('Gateway Timeout');
 		throw err;
 	});
+
+	const alerts = petAlerts.map(convertPetAlertToAlert);
 
 	logger.trace(`[worker - ${workerName}] on ${name} for ${animal} - page ${page} - ${alerts.length} alerts`);
 

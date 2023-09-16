@@ -1,5 +1,5 @@
-import { WorkerData } from '@interfaces/index';
-import { CONFIG } from '@workers/config';
+import { Alert, PetAlertData, WorkerData } from '@interfaces/index';
+import { isString, isUrl } from '@utils/type-guards';
 import { Worker } from 'worker_threads';
 
 /**
@@ -36,25 +36,58 @@ export const getInfoFromDepartementLink = (departement: string) => {
  * @param animal animal type
  * @returns the worker
  */
-export const invokeWorker = (
-	code: string,
-	name: string,
-	sitePages: number,
-	currentWorker: string,
-	indexRefence: number,
-	animal: 'chien' | 'chat',
-) => {
+export const invokeWorker = (code: string, name: string, sitePages: number, currentWorker: string, animal: 'chien' | 'chat') => {
 	return new Worker('./dist/workers/index.js', {
 		execArgv: process.env.NODE_ENV === 'development' ? ['-r', 'tsup/register'] : undefined,
 		workerData: {
-			pageToFetchs: [...Array(sitePages).keys()].slice(
-				(sitePages / CONFIG.MAX_WORKERS) * indexRefence,
-				(sitePages / CONFIG.MAX_WORKERS) * (indexRefence + 1),
-			),
+			pageToFetchs: [...Array(sitePages).keys()],
 			workerName: currentWorker,
 			name,
 			code,
 			animal,
 		} satisfies WorkerData,
 	});
+};
+
+export const convertPetAlertToAlert = (petAlert: PetAlertData): Alert => {
+	return {
+		publisherId: petAlert.userId,
+		publisherPhoneNumber: petAlert?.contact_phone,
+		publisherEmail: petAlert?.contact_email,
+		isFromAppUser: false,
+		name: petAlert?.animal_name,
+		description: petAlert?.message,
+		status: 'published',
+		alertType: 'lost_pet',
+		icadIdentifier: undefined,
+		petType: petAlert.animal_espece[0]?.fr,
+		specie: petAlert.animal_race[0]?.Fr,
+		age: undefined,
+		ageExpressedIn: undefined,
+		sex: petAlert.animal_sex?.Fr,
+		breed: petAlert.animal_race[0]?.Fr,
+		height: petAlert.animal_size?.Fr,
+		weight: petAlert.animal_silhouette?.Fr,
+		hair: petAlert.animal_hair?.Fr,
+		colors: [petAlert.animal_color1[0]?.Fr, petAlert.animal_color2[0]?.Fr, petAlert.animal_color3[0]?.Fr].filter(isString),
+		imageUrls: petAlert.animal_photo
+			?.split(',')
+			.filter(isUrl)
+			.map((p) => p.trim()),
+		hasTatoo: petAlert.animal_tatouage === 1,
+		hasNecklace: petAlert.animal_hasCollar === 1,
+		necklaceMaterial: petAlert.animal_collartype?.Fr,
+		necklaceColor: petAlert.animal_collarcolor?.Fr,
+		hasMicrochip: petAlert.animal_puce === 'Oui',
+		isSterilized: petAlert.animal_surgery === 1,
+		location: {
+			country: 'France',
+			city: petAlert.address_city_nom,
+			address: petAlert.address_street,
+			postalCode: petAlert.address_city_CP,
+			departmentName: petAlert.department?.SEO,
+			departmentCode: petAlert.department?.CP,
+		},
+		dateTime: new Date(petAlert.date),
+	};
 };

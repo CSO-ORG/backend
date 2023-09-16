@@ -14,7 +14,7 @@ export class UsersService {
     @InjectRepository(User) private repo: Repository<User>,
     private dataSource: DataSource,
   ) {}
-  async findOne(id: number): Promise<User | null> {
+  async findOne(id: string): Promise<User | null> {
     return this.repo.findOne({ where: { id: id } });
   }
 
@@ -46,7 +46,7 @@ export class UsersService {
     }
   }
 
-  async remove(id: number) {
+  async remove(id: string) {
     const user = await this.findOne(id);
 
     if (!user) {

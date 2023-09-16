@@ -1,7 +1,7 @@
-import { PetAlertJson } from '@interfaces/index';
+import { logger } from './logger';
+import { Alert } from '@interfaces/alert';
 import axios from 'axios';
 import { readFileSync, readdirSync, rmSync, writeFileSync } from 'fs';
-import { logger } from './logger';
 
 const rootDataFolder = './data';
 const subsFolders = ['chien', 'chat'];
@@ -16,8 +16,8 @@ export const mergeFiles = () => {
 		for (const dptFolder of dptFolders) {
 			const files = readdirSync(`${rootDataFolder}/${subfolder}/${dptFolder}`).filter((e) => e !== 'merge.json');
 
-			const output = files.reduce((acc: PetAlertJson[], file) => {
-				const fileContent: PetAlertJson[] = JSON.parse(readFileSync(`${rootDataFolder}/${subfolder}/${dptFolder}/${file}`, 'utf8'));
+			const output = files.reduce((acc: Alert[], file) => {
+				const fileContent: Alert[] = JSON.parse(readFileSync(`${rootDataFolder}/${subfolder}/${dptFolder}/${file}`, 'utf8'));
 
 				return [...acc, ...fileContent];
 			}, []);

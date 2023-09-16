@@ -237,7 +237,7 @@ export class AlertOutputDto {
     description: 'the loss date and time',
     default: '01/01/2023',
   })
-  dateTime: string;
+  date: string;
 
   @ApiProperty({
     type: Date,

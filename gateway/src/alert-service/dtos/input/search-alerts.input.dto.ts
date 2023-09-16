@@ -1,9 +1,9 @@
-import { ALERT_CATEGORY, IPaginationFilters } from '@cso-org/shared';
+import { IPaginationFilters } from '@cso-org/shared';
 import { ApiProperty } from '@nestjs/swagger';
 import { IsNotEmpty, IsNumber, Min } from 'class-validator';
 import { IsValidGetAlertsFilters } from 'src/alert-service/validators/get-alerts-filters.validator';
 
-export class GetAlertsInputDto {
+export class SearchAlertsInputDto {
   @ApiProperty({
     type: Number,
     description: 'page number',
@@ -26,8 +26,8 @@ export class GetAlertsInputDto {
   @ApiProperty({
     type: Object,
     description: 'list of options',
-    default: { alertType: ALERT_CATEGORY.LOST_PET },
+    default: { searchText: 'German sheperd with brown hair' },
   })
-  @IsValidGetAlertsFilters({ context: { type: 'getAll' } })
+  @IsValidGetAlertsFilters({ context: { type: 'search' } })
   filters: IPaginationFilters;
 }

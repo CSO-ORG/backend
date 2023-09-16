@@ -27,5 +27,5 @@ jobs:
             cd backend
             docker-compose stop
             docker-compose down
-            docker system prune -f
+            docker system prune -a -f
             docker-compose up --build -d

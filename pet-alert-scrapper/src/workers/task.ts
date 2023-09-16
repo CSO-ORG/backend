@@ -1,7 +1,7 @@
-import { PetAlertApiFilters, PetAlertJson } from '@interfaces/index';
+import { CONFIG } from './config';
+import { PetAlertApiFilters, PetAlertData, Results } from '@interfaces/index';
 import { addQueryToUrl } from '@utils/index';
 import axios from 'axios';
-import { CONFIG } from './config';
 
 /**
  * Fetch alerts from petalert API with filters
@@ -11,19 +11,18 @@ import { CONFIG } from './config';
  * @param animal animal type
  * @returns alerts from petalert API
  */
-export const fetchAlertsByPage = async (page: number, code: string, name: string, animal: 'chien' | 'chat'): Promise<PetAlertJson[]> => {
+export const fetchAlertsByPage = async (page: number, code: string, name: string, animal: 'chien' | 'chat'): Promise<PetAlertData[]> => {
 	const filters: PetAlertApiFilters = {
-		pageNumber: page,
-		dptName: name,
-		dptCode: code,
-		animalType: animal,
-		alertType: 'perdu',
+		page,
+		type: 'lost',
 	};
 
-	const urlWithFilters = addQueryToUrl(new URL(CONFIG.URL_TO_FETCH), {
+	const targetSpecificAnimalTypeUrl = `${animal}-perdu/pet-alert-${code}-${name}`;
+
+	const urlWithFilters = addQueryToUrl(new URL(CONFIG.URL_TO_FETCH + targetSpecificAnimalTypeUrl), {
 		filters: JSON.stringify(filters),
 	}).toString();
 	const response = await axios(urlWithFilters);
-	const alerts: PetAlertJson[] = await response.data;
-	return alerts;
+	const alerts: Results = response.data.results;
+	return alerts.items;
 };

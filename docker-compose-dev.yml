@@ -1,4 +1,5 @@
-version: "3"
+version: "3.8"
+
 services:
   # RABBITMQ
   rabbitmq:
@@ -96,14 +97,14 @@ services:
       interval: 10s
       retries: 10
 
-  # PET-ALERT-SCRAPER
-  pet-alert-scraper:
-    build:
-      dockerfile: Dockerfile.dev
-      context: ./pet-alert-scrapper
-    restart: always
-    ports:
-      - 8086:3000
-    volumes:
-      - /usr/src/app/node_modules
-      - ./pet-alert-scrapper:/usr/src/app
+  # # PET-ALERT-SCRAPER
+  # pet-alert-scraper:
+  #   build:
+  #     dockerfile: Dockerfile.dev
+  #     context: ./pet-alert-scrapper
+  #   restart: always
+  #   ports:
+  #     - 8086:3000
+  #   volumes:
+  #     - /usr/src/app/node_modules
+  #     - ./pet-alert-scrapper:/usr/src/app
