@@ -49,6 +49,7 @@ export class FavoriteService {
   async getMyFavorites(user: IUser) {
     try {
       const foundFavorites = await this.repo.find({
+        relations: ['alert'],
         where: {
           userId: user.id,
         },
