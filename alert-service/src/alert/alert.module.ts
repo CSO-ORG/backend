@@ -30,5 +30,6 @@ import { Alert } from './entities/alert.entity';
   ],
   controllers: [AlertController],
   providers: [AlertService],
+  exports: [AlertService],
 })
 export class AlertModule {}
