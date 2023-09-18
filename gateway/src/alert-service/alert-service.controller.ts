@@ -24,7 +24,9 @@ import { SearchAlertsInputDto } from './dtos/input/search-alerts.input.dto';
 import { UpdateAlertInputDto } from './dtos/input/update-alert.input.dto';
 import { AlertOutputDto } from './dtos/output/alert.output.dto';
 import { CreateAlertOutputDto } from './dtos/output/create-alert.output.dto';
+import { CreateFavoriteOutputDto } from './dtos/output/create-favorite.output.dto';
 import { DeleteAlertOutputDto } from './dtos/output/delete-alert.output.dto';
+import { DeleteFavoriteOutputDto } from './dtos/output/delete-favorite.output.dto';
 import { ImportAlertsOutputDto } from './dtos/output/import-alerts.output.dto';
 import { PaginationOutputDto } from './dtos/output/pagination.output.dto';
 
@@ -132,6 +134,47 @@ export class AlertServiceController {
   })
   async deleteAlert(@Param('id') id: string, @Request() req) {
     return this.sendRequest(ALERT_SERVICE_MESSAGE_PATTERN.DELETE_ALERT, {
+      id,
+      user: req.user,
+    });
+  }
+
+  @Post(':id/favorite')
+  @HttpCode(201)
+  @UseGuards(AccessTokenGuard)
+  @ApiBearerAuth()
+  @ApiOkResponse({
+    type: CreateFavoriteOutputDto,
+  })
+  async createFavorite(@Request() req, @Param('id') id: string) {
+    return this.sendRequest(ALERT_SERVICE_MESSAGE_PATTERN.ADD_FAVORITE, {
+      id,
+      user: req.user,
+    });
+  }
+
+  @Get('favorites/all')
+  @HttpCode(200)
+  @UseGuards(AccessTokenGuard)
+  @ApiBearerAuth()
+  @ApiOkResponse({
+    description: 'get my favorites',
+  })
+  async getMyFavorites(@Request() req) {
+    return this.sendRequest(ALERT_SERVICE_MESSAGE_PATTERN.GET_FAVORITES, {
+      user: req.user,
+    });
+  }
+
+  @Delete('favorites/:id')
+  @HttpCode(201)
+  @UseGuards(AccessTokenGuard)
+  @ApiBearerAuth()
+  @ApiOkResponse({
+    type: DeleteFavoriteOutputDto,
+  })
+  async deleteFavorite(@Request() req, @Param('id') id: string) {
+    return this.sendRequest(ALERT_SERVICE_MESSAGE_PATTERN.DELETE_FAVORITE, {
       id,
       user: req.user,
     });

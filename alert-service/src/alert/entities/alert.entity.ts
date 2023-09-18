@@ -1,4 +1,5 @@
 import { ALERT_STATUS, ILOCATION } from '@cso-org/shared';
+import { Favorite } from 'src/favorite/entities/favorite.entity';
 
 import {
   AfterInsert,
@@ -7,6 +8,7 @@ import {
   Column,
   CreateDateColumn,
   Entity,
+  OneToMany,
   PrimaryGeneratedColumn,
   UpdateDateColumn,
 } from 'typeorm';
@@ -220,6 +222,9 @@ export class Alert {
     nullable: true,
   })
   date: string;
+
+  @OneToMany(() => Favorite, (favorite) => favorite.alert)
+  favorites: Favorite[];
 
   @CreateDateColumn({
     name: 'created_at',

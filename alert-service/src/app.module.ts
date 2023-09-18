@@ -9,6 +9,7 @@ import { AlertModule } from './alert/alert.module';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { dataSourceOptions } from './config/db/data-source';
+import { FavoriteModule } from './favorite/favorite.module';
 import { HealthModule } from './health/health.module';
 
 @Module({
@@ -46,6 +47,7 @@ import { HealthModule } from './health/health.module';
     TypeOrmModule.forRoot(dataSourceOptions),
     AlertModule,
     HealthModule,
+    FavoriteModule,
   ],
   controllers: [AppController],
   providers: [
