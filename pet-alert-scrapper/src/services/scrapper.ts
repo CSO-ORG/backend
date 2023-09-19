@@ -87,6 +87,10 @@ export const convertPetAlertToAlert = (petAlert: PetAlertData): Alert => {
 			postalCode: petAlert.address_city_CP,
 			departmentName: petAlert.department?.SEO,
 			departmentCode: petAlert.department?.CP,
+			coords: {
+				latitude: petAlert.coords_lat,
+				longitude: petAlert.coords_lng,
+			},
 		},
 		dateTime: new Date(petAlert.date),
 	};
