@@ -23,25 +23,25 @@ jobs:
           context: ./gateway
           file: ./gateway/Dockerfile
           push: true
-          tags: ${{ secrets.DOCKER_USERNAME }}/k8s-cso-gateway:${{secrets.CURRENT_RELEASE_VERSION}}
+          tags: ${{ secrets.DOCKER_USERNAME }}/k8s-cso-gateway:release-${{secrets.CURRENT_RELEASE_VERSION}}
       - name: Build and push - ACCOUNT-MICROSERVICE
         uses: docker/build-push-action@v5
         with:
           context: ./account-service
           file: ./account-service/Dockerfile
           push: true
-          tags: ${{ secrets.DOCKER_USERNAME }}/k8s-cso-account-microservice:${{secrets.CURRENT_RELEASE_VERSION}}
+          tags: ${{ secrets.DOCKER_USERNAME }}/k8s-cso-account-microservice:release-${{secrets.CURRENT_RELEASE_VERSION}}
       - name: Build and push - ALERTE-MICROSERVICE
         uses: docker/build-push-action@v5
         with:
           context: ./alert-service
           file: ./alert-service/Dockerfile
           push: true
-          tags: ${{ secrets.DOCKER_USERNAME }}/k8s-cso-alert-microservice:${{secrets.CURRENT_RELEASE_VERSION}}
+          tags: ${{ secrets.DOCKER_USERNAME }}/k8s-cso-alert-microservice:release-${{secrets.CURRENT_RELEASE_VERSION}}
       - name: Build and push - PET-ALERT-SCRAPER
         uses: docker/build-push-action@v5
         with:
           context: ./pet-alert-scrapper
           file: ./pet-alert-scrapper/Dockerfile
           push: true
-          tags: ${{ secrets.DOCKER_USERNAME }}/k8s-cso-pet-alert-scraper:${{secrets.CURRENT_RELEASE_VERSION}}
+          tags: ${{ secrets.DOCKER_USERNAME }}/k8s-cso-pet-alert-scraper:release-${{secrets.CURRENT_RELEASE_VERSION}}
