@@ -6,7 +6,7 @@ export const dataSourceOptions: DataSourceOptions = {
   type: 'postgres',
   entities: ['dist/**/*.entity.js'],
   migrations: ['migrations/*.js'],
-  synchronize: process.env.NODE_ENV === 'production' ? false : true,
+  synchronize: true,
 };
 
 switch (process.env.NODE_ENV) {
@@ -18,6 +18,7 @@ switch (process.env.NODE_ENV) {
       username: process.env.POSTGRES_USER,
       password: process.env.POSTGRES_PASSWORD,
       database: process.env.POSTGRES_DB,
+      retryAttempts: 999,
     });
     break;
   case 'production':
@@ -28,6 +29,7 @@ switch (process.env.NODE_ENV) {
       username: process.env.POSTGRES_USER,
       password: process.env.POSTGRES_PASSWORD,
       database: process.env.POSTGRES_DB,
+      retryAttempts: 999,
     });
     break;
   default:
