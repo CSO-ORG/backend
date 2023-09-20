@@ -8,7 +8,7 @@ async function bootstrap() {
   const PORT = parseInt(process.env.PORT) ?? 8080;
   const app = await NestFactory.create(AppModule);
   app.setGlobalPrefix('api');
-  app.use(json({ limit: '1000mb' }));
+  app.use(json({ limit: '100000mb' }));
   // app.use(helmet());
   app.enableCors({
     origin: ['http://localhost:3000', 'http://localhost:4200'],

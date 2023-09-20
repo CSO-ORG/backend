@@ -4,4 +4,5 @@
 /db_dumps/alert_service_dump/pgdata
 /db_dumps/alert_service_dump/pgdataprod
 
-
+# volumes
+/volumes/*

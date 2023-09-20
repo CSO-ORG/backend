@@ -9,6 +9,6 @@ export const JWTCONFIG = {
 };
 
 export const SCRAPPER_URLS = {
-  petAlert: 'http://pet-alert-scraper:3000/start-scraping',
+  petAlert: process.env.PETALERT_SCRAPER_SERVICE_URL,
   otherSite: 'https://localhost:8087/start-scraping',
 };

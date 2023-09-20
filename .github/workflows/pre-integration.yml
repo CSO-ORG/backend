@@ -1,4 +1,4 @@
-name: Integration
+name: pre-integration
 
 on:
   pull_request:
