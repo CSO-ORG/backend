@@ -2,7 +2,7 @@ name: cd
 
 on:
   push:
-    branches: ["main"]
+    branches: ["staging"]
 jobs:
   deploy:
     name: Deploy latest changes
@@ -16,7 +16,8 @@ jobs:
           password: ${{ secrets.SSH_PASSWORD }}
           script: |
             cd backend
-            git pull origin main
+            git switch staging
+            git pull origin staging
       - name: Deploying changes
         uses: appleboy/ssh-action@v0.1.6
         with:
@@ -24,8 +25,7 @@ jobs:
           username: ${{ secrets.SSH_USERNAME }}
           password: ${{ secrets.SSH_PASSWORD }}
           script: |
-            cd backend
-            docker-compose stop
-            docker-compose down
-            docker system prune -a -f
-            docker-compose up --build -d
+            cd backend/k8s/staging
+            kubectl delete -f .
+            kubectl apply -f .
+            kubectl get all
