@@ -20,28 +20,28 @@ jobs:
       - name: Build and push - GATEWAY
         uses: docker/build-push-action@v5
         with:
-          context: ./gateway
-          file: ./Dockerfile
+          context: .
+          file: ./gateway/Dockerfile
           push: true
           tags: ${{ secrets.DOCKER_USERNAME }}/k8s-cso-gateway:${{secrets.CURRENT_RELEASE_VERSION}}
       - name: Build and push - ACCOUNT-MICROSERVICE
         uses: docker/build-push-action@v5
         with:
-          context: ./account-service
-          file: ./Dockerfile
+          context: .
+          file: ./account-service/Dockerfile
           push: true
           tags: ${{ secrets.DOCKER_USERNAME }}/k8s-cso-account-microservice:${{secrets.CURRENT_RELEASE_VERSION}}
       - name: Build and push - ALERTE-MICROSERVICE
         uses: docker/build-push-action@v5
         with:
-          context: ./alert-service
-          file: ./Dockerfile
+          context: .
+          file: ./alert-service/Dockerfile
           push: true
           tags: ${{ secrets.DOCKER_USERNAME }}/k8s-cso-alert-microservice:${{secrets.CURRENT_RELEASE_VERSION}}
       - name: Build and push - PET-ALERT-SCRAPER
         uses: docker/build-push-action@v5
         with:
-          context: ./pet-alert-scrapper
-          file: ./Dockerfile
+          context: .
+          file: ./pet-alert-scrapper/Dockerfile
           push: true
           tags: ${{ secrets.DOCKER_USERNAME }}/k8s-cso-pet-alert-scraper:${{secrets.CURRENT_RELEASE_VERSION}}
