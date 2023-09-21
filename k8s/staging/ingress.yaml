@@ -13,20 +13,20 @@ metadata:
 spec:
   ingressClassName: nginx
   rules:
-    - host: cso-gateway.com
+    - host: garault.online
       http:
         paths:
-          - path: /
+          - path: /api
             pathType: Prefix
             backend:
               service:
                 name: cso-gateway
                 port:
                   number: 8080
-    - host: cso-queue.com
+    - host: garault.online
       http:
         paths:
-          - path: /
+          - path: /queue
             pathType: Prefix
             backend:
               service:
