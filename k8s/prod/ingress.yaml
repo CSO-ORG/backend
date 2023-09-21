@@ -13,23 +13,13 @@ metadata:
 spec:
   ingressClassName: nginx
   rules:
-    - host: cso-gateway.com
+    - host: http://poilusperdus.fr
       http:
         paths:
-          - path: /
+          - path: /api
             pathType: Prefix
             backend:
               service:
                 name: cso-gateway
                 port:
                   number: 8080
-    - host: cso-queue.com
-      http:
-        paths:
-          - path: /
-            pathType: Prefix
-            backend:
-              service:
-                name: cso-rabbitmq
-                port:
-                  number: 15672
