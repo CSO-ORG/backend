@@ -84,6 +84,11 @@ spec:
         - name: account-service-db
           image: postgres:15.2
           env:
+            - name: PGDATA
+              valueFrom:
+                secretKeyRef:
+                  name: global-secrets
+                  key: ACCOUNT_SERVICE_PGDATA
             - name: POSTGRES_USER
               valueFrom:
                 secretKeyRef:
@@ -111,7 +116,7 @@ spec:
                   key: ACCOUNT_SERVICE_POSTGRES_HOST    
           volumeMounts:
             - name: account-service-db-persistent-storage
-              mountPath: /var/lib/postgresql/data
+              mountPath: /var/lib/postgresql/data/csodata
       volumes:
         - name: account-service-db-persistent-storage
           persistentVolumeClaim:
@@ -139,6 +144,11 @@ spec:
         - name: alert-service-db
           image: postgres:15.2
           env:
+            - name: PGDATA
+              valueFrom:
+                secretKeyRef:
+                  name: global-secrets
+                  key: ALERT_SERVICE_PGDATA
             - name: POSTGRES_USER
               valueFrom:
                 secretKeyRef:
@@ -166,7 +176,7 @@ spec:
                   key: ALERT_SERVICE_POSTGRES_HOST    
           volumeMounts:
             - name: alert-service-db-persistent-storage
-              mountPath: /var/lib/postgresql/data
+              mountPath: /var/lib/postgresql/data/csodata
       volumes:
         - name: alert-service-db-persistent-storage
           persistentVolumeClaim:

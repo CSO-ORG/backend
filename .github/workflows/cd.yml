@@ -26,6 +26,6 @@ jobs:
           password: ${{ secrets.SSH_PASSWORD }}
           script: |
             cd backend/k8s/staging
-            kubectl delete -f .
-            kubectl apply -f .
-            kubectl get all
+            microk8s kubectl delete -f .
+            microk8s kubectl apply -f .
+            microk8s kubectl get all
