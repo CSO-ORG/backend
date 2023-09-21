@@ -11,7 +11,7 @@ async function bootstrap() {
   app.use(json({ limit: '100000mb' }));
   // app.use(helmet());
   app.enableCors({
-    origin: ['http://localhost:3000', 'http://localhost:4200'],
+    origin: '*',
     credentials: true,
   });
   app.enableVersioning({
