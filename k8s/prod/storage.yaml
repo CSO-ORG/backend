@@ -6,7 +6,7 @@ kind: PersistentVolumeClaim
 metadata:
   name: rabbitmq-pvc
 spec:
-  storageClassName: rabbitmq-cloud-ssd
+  storageClassName: rabbitmq-cloud-storage
   accessModes:
     - ReadWriteOnce
   resources:
@@ -16,7 +16,7 @@ spec:
 apiVersion: storage.k8s.io/v1
 kind: StorageClass
 metadata:
-  name: rabbitmq-cloud-ssd
+  name: rabbitmq-cloud-storage
 provisioner: kubernetes.io/aws-ebs
 parameters:
   type: gp2 
@@ -30,7 +30,7 @@ kind: PersistentVolumeClaim
 metadata:
   name: account-service-db-pvc
 spec:
-  storageClassName: account-service-db-cloud-ssd
+  storageClassName: account-service-db-cloud-storage
   accessModes:
     - ReadWriteOnce
   resources:
@@ -40,7 +40,7 @@ spec:
 apiVersion: storage.k8s.io/v1
 kind: StorageClass
 metadata:
-  name: account-service-db-cloud-ssd
+  name: account-service-db-cloud-storage
 provisioner: kubernetes.io/aws-ebs
 parameters:
   type: gp2
@@ -54,7 +54,7 @@ kind: PersistentVolumeClaim
 metadata:
   name: alert-service-db-pvc
 spec:
-  storageClassName: alert-service-db-cloud-ssd
+  storageClassName: alert-service-db-cloud-storage
   accessModes:
     - ReadWriteOnce
   resources:
@@ -64,7 +64,7 @@ spec:
 apiVersion: storage.k8s.io/v1
 kind: StorageClass
 metadata:
-  name: alert-service-db-cloud-ssd
+  name: alert-service-db-cloud-storage
 provisioner: kubernetes.io/aws-ebs
 parameters:
   type: gp2
