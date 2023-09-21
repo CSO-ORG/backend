@@ -24,7 +24,7 @@ spec:
   accessModes:
     - ReadWriteOnce
   hostPath:
-    path: /Users/kaymkassai/Desktop/final_year_project/backend/volumes/rabbitmq-volume
+    path: /mnt/volumes/rabbitmq-volume
     type: DirectoryOrCreate
 
 ---
@@ -54,7 +54,7 @@ spec:
   accessModes:
     - ReadWriteOnce
   hostPath:
-    path: /Users/kaymkassai/Desktop/final_year_project/backend/volumes/account-service-db-volume
+    path: /mnt/volumes/account-service-db-volume
     type: DirectoryOrCreate
 
 ---
@@ -84,5 +84,5 @@ spec:
   accessModes:
     - ReadWriteOnce
   hostPath:
-    path: /Users/kaymkassai/Desktop/final_year_project/backend/volumes/alert-service-db-volume
+    path: /mnt/volumes/alert-service-db-volume
     type: DirectoryOrCreate
