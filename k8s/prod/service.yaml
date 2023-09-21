@@ -11,10 +11,9 @@ spec:
   ports:
     - name: http
       port: 15672
-      nodePort: 30010
     - name: endpoint
       port: 5672
-  type: NodePort
+  type: ClusterIP
  
 ---
 # # # # # # # # # # # # # # # # # # # # # # # # # # # #
@@ -62,8 +61,7 @@ spec:
   ports:
     - name: http
       port: 8080
-      nodePort: 30020
-  type: NodePort
+  type: LoadBalancer
 
 ---
 # # # # # # # # # # # # # # # # # # # # # # # # # # # #
