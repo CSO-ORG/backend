@@ -51,7 +51,7 @@ export const invokeWorker = (code: string, name: string, sitePages: number, curr
 
 export const convertPetAlertToAlert = (petAlert: PetAlertData): Alert => {
 	return {
-		publisherId: petAlert.userId,
+		publisherId: 'pet-alert',
 		publisherPhoneNumber: petAlert?.contact_phone,
 		publisherEmail: petAlert?.contact_email,
 		isFromAppUser: false,
