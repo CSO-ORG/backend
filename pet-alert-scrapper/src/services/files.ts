@@ -45,8 +45,8 @@ export const mergeFiles = () => {
  * Send all JSON files to the gateway
  * We send it by chunk of 500 alerts, then we delete the file
  */
-export const sendFilesToGateway = () => {
-  subsFolders.forEach((subfolder) => {
+export const sendFilesToGateway = async () => {
+  subsFolders.forEach(async (subfolder) => {
     const dptFolders = readdirSync(`${rootDataFolder}/${subfolder}`).filter(
       (e) => e !== '.keep',
     )
@@ -59,11 +59,12 @@ export const sendFilesToGateway = () => {
       )
 
       while (fileContent.length > 0) {
-        const chunk = fileContent.splice(0, 500)
-        axios
-          .post(`${process.env.GATEWAY_URL}`, JSON.stringify(chunk))
-          .catch((e: unknown) => {
-            logger.error(e)
+        const chunk: Alert[] = fileContent.splice(0, 500)
+        await new Promise((resolve) => setTimeout(resolve, 60 * 1000))
+        await axios
+          .post(`${process.env.GATEWAY_URL}`, { alerts: chunk })
+          .catch((e: any) => {
+            logger.error(e?.message)
           })
       }
     }

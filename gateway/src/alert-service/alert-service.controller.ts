@@ -41,8 +41,6 @@ export class AlertServiceController {
 
   @Post('create')
   @HttpCode(201)
-  @UseGuards(AccessTokenGuard)
-  @ApiBearerAuth()
   @ApiOkResponse({
     type: CreateAlertOutputDto,
   })
@@ -50,14 +48,6 @@ export class AlertServiceController {
     return this.sendRequest(ALERT_SERVICE_MESSAGE_PATTERN.CREATE_ALERT, body);
   }
 
-  @Post('import-alerts')
-  @HttpCode(201)
-  @ApiOkResponse({
-    type: ImportAlertsOutputDto,
-  })
-  async importAlerts(@Body() body: ImportAlertsInputDto) {
-    return this.sendRequest(ALERT_SERVICE_MESSAGE_PATTERN.IMPORT_ALERTS, body);
-  }
   @Post('get-all')
   @HttpCode(200)
   @ApiOkResponse({
@@ -65,6 +55,15 @@ export class AlertServiceController {
   })
   async getAlerts(@Body() body: GetAlertsInputDto) {
     return this.sendRequest(ALERT_SERVICE_MESSAGE_PATTERN.GET_ALL, body);
+  }
+  @Post('import-alerts')
+  @HttpCode(201)
+  @ApiOkResponse({
+    type: ImportAlertsOutputDto,
+  })
+  async importAlerts(@Body() body: ImportAlertsInputDto) {
+    console.log('====> [gateway received: ]', body.alerts.length);
+    return this.sendRequest(ALERT_SERVICE_MESSAGE_PATTERN.IMPORT_ALERTS, body);
   }
 
   @Get('create-elastic-index')
@@ -76,18 +75,29 @@ export class AlertServiceController {
     return this.sendRequest(ALERT_SERVICE_MESSAGE_PATTERN.CREATE_INDEX, {});
   }
 
-  @Post('get-all-from-elasticsearch')
+  @Get('get-coordinates')
   @HttpCode(200)
   @ApiOkResponse({
-    type: PaginationOutputDto,
+    description: 'get all alert coordinates',
   })
-  async getAllFromElasticSearch(@Body() body: GetAlertsInputDto) {
+  async getCoordinates() {
     return this.sendRequest(
-      ALERT_SERVICE_MESSAGE_PATTERN.GET_ALL_FROM_ELASTICSEARCH,
-      body,
+      ALERT_SERVICE_MESSAGE_PATTERN.GET_ALL_COORDINATES,
+      {},
     );
   }
 
+  // @Post('get-all-from-elasticsearch')
+  // @HttpCode(200)
+  // @ApiOkResponse({
+  //   type: PaginationOutputDto,
+  // })
+  // async getAllFromElasticSearch(@Body() body: GetAlertsInputDto) {
+  //   return this.sendRequest(
+  //     ALERT_SERVICE_MESSAGE_PATTERN.GET_ALL_FROM_ELASTICSEARCH,
+  //     body,
+  //   );
+  // }
   @Post('search')
   @HttpCode(200)
   @ApiOkResponse({

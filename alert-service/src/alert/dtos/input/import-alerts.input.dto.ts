@@ -5,13 +5,13 @@ import {
   IsArray,
   ValidateNested,
 } from 'class-validator';
-import { CreateAlert2InputDto } from './create-alert2.input.dto';
+import { CreateAlertInputDto } from './create-alert.input.dto';
 
 export class ImportAlertsInputDto {
   @IsArray()
   @ValidateNested({ each: true })
   @ArrayMinSize(1)
   @ArrayMaxSize(10000)
-  @Type(() => CreateAlert2InputDto)
-  alerts: CreateAlert2InputDto[];
+  @Type(() => CreateAlertInputDto)
+  alerts: CreateAlertInputDto[];
 }

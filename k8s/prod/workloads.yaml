@@ -542,3 +542,8 @@ spec:
                 secretKeyRef:
                   name: global-secrets
                   key: PET_ALERT_SCRAPPER_GATEWAY_URL
+            - name: MAPBOX_TOKEN
+              valueFrom:
+                secretKeyRef:
+                  name: global-secrets
+                  key: MAPBOX_TOKEN      

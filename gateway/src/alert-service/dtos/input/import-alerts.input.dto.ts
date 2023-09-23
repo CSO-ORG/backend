@@ -6,11 +6,11 @@ import {
   IsArray,
   ValidateNested,
 } from 'class-validator';
-import { CreateAlert2InputDto } from './create-alert2.input.dto';
+import { CreateAlertInputDto } from './create-alert.input.dto';
 
 export class ImportAlertsInputDto {
   @ApiProperty({
-    type: Array<CreateAlert2InputDto>,
+    type: Array<CreateAlertInputDto>,
     description: 'List of alerts to alerts to be imported',
     default: [],
   })
@@ -18,6 +18,6 @@ export class ImportAlertsInputDto {
   @ValidateNested({ each: true })
   @ArrayMinSize(1)
   @ArrayMaxSize(10000)
-  @Type(() => CreateAlert2InputDto)
-  alerts: CreateAlert2InputDto[];
+  @Type(() => CreateAlertInputDto)
+  alerts: CreateAlertInputDto[];
 }
