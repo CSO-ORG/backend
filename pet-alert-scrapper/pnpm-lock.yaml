@@ -2,8 +2,8 @@ lockfileVersion: '6.0'
 
 dependencies:
   '@cso-org/shared':
-    specifier: ^1.0.29
-    version: 1.0.29
+    specifier: ^1.0.30
+    version: 1.0.30
   '@mapbox/mapbox-sdk':
     specifier: ^0.15.3
     version: 0.15.3
@@ -109,8 +109,8 @@ packages:
       regenerator-runtime: 0.13.11
     dev: true
 
-  /@cso-org/shared@1.0.29:
-    resolution: {integrity: sha512-ule/WcWnVzlwMIpR8PDHrRVlI5vkW+XNm4wHEECBu4fEK6wjCOEKBt7VKcW4YWH2lhzFDqb2hJY4dlqA7caPog==}
+  /@cso-org/shared@1.0.30:
+    resolution: {integrity: sha512-GW2nZkC+b7/+Z23/UjIT5ZnDKm3ExSteJl/VW5r0GzSIrx6pIasHKHOAt179EZjIVjp2qymddhQ3paODKtev7A==}
     dev: false
 
   /@esbuild/android-arm64@0.16.17:
