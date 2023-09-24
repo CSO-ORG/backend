@@ -29,6 +29,8 @@
     "prepare": "cd .. && husky install pet-alert-scrapper/.husky"
   },
   "devDependencies": {
+    "@types/amqplib": "^0.10.2",
+    "@types/mapbox__mapbox-sdk": "^0.13.6",
     "@types/node": "^20.3.1",
     "concurrently": "^8.2.0",
     "husky": "^8.0.0",
@@ -40,7 +42,9 @@
     "vitest": "0.28.5"
   },
   "dependencies": {
-    "@cso-org/shared": "^1.0.19",
+    "@cso-org/shared": "^1.0.28",
+    "@mapbox/mapbox-sdk": "^0.15.3",
+    "amqplib": "^0.10.3",
     "axios": "^1.4.0",
     "cheerio": "1.0.0-rc.12",
     "dotenv": "^16.3.1",

@@ -1,7 +1,10 @@
 import { Alert, PetAlertData, WorkerData } from '@interfaces/index'
 import { isString, isUrl } from '@utils/type-guards'
 import { Worker } from 'worker_threads'
-
+import axios from 'axios'
+import { logger } from './logger'
+import * as dotenv from 'dotenv'
+dotenv.config()
 /**
  * Get the number of pages to fetch from the number of alerts (10 alerts per page)
  * @param results number of alerts
@@ -60,12 +63,17 @@ export const invokeWorker = (
   })
 }
 
-/**
- * Convert a pet alert type, from PetAlert API, to an custom alert
- * @param petAlert pet alert from PetAlert API
- * @returns an alert
- */
-export const convertPetAlertToAlert = (petAlert: PetAlertData): Alert => {
+export const convertPetAlertToAlert = async (
+  petAlert: PetAlertData,
+): Promise<Alert> => {
+  if (!petAlert?.coords_lat && !petAlert?.coords_lng) {
+    const coords = await geocodeAddress(
+      `${petAlert?.address_street} ${petAlert?.address_city_nom} ${petAlert?.address_city_CP} ${petAlert?.address_country}`,
+    )
+
+    petAlert.coords_lat = coords?.latitude
+    petAlert.coords_lng = coords?.longitude
+  }
   return {
     publisherId: 'pet-alert',
     publisherPhoneNumber: petAlert?.contact_phone,
@@ -112,6 +120,31 @@ export const convertPetAlertToAlert = (petAlert: PetAlertData): Alert => {
         longitude: petAlert.coords_lng,
       },
     },
-    dateTime: new Date(petAlert.date),
+    date: new Date(petAlert.date),
+  }
+}
+
+async function geocodeAddress(address: any) {
+  const accessToken = process.env.MAPBOX_TOKEN
+
+  const url = `https://api.mapbox.com/geocoding/v5/mapbox.places/${encodeURIComponent(
+    address,
+  )}.json?access_token=${accessToken}&country=FR`
+
+  try {
+    const response = await axios.get(url)
+    const features = response.data.features
+    if (features.length > 0) {
+      const [longitude, latitude] = features[0].geometry.coordinates
+      return {
+        latitude,
+        longitude,
+      }
+    }
+  } catch (error) {
+    return {
+      latitude: null,
+      longitude: null,
+    }
   }
 }

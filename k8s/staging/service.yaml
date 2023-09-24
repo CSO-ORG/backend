@@ -1,4 +1,20 @@
 # # # # # # # # # # # # # # # # # # # # # # # # # # # #
+#                     ELASTICSEARCH                   #
+# # # # # # # # # # # # # # # # # # # # # # # # # # # #
+apiVersion: v1
+kind: Service
+metadata:
+  name: cso-elasticsearch
+spec:
+  selector:
+    app: elasticsearch
+  ports:
+    - protocol: TCP
+      port: 9200
+      targetPort: 9200
+  type: ClusterIP
+---
+# # # # # # # # # # # # # # # # # # # # # # # # # # # #
 #                     RABBITMQ                        #
 # # # # # # # # # # # # # # # # # # # # # # # # # # # #
 apiVersion: v1

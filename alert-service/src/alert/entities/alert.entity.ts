@@ -21,7 +21,7 @@ export class Alert {
   @Column({
     name: 'publisher_id',
     type: 'varchar',
-    nullable: true,
+    nullable: false,
   })
   publisherId: string;
 
@@ -225,6 +225,22 @@ export class Alert {
 
   @OneToMany(() => Favorite, (favorite) => favorite.alert)
   favorites: Favorite[];
+
+  @Column({
+    name: 'is_suspicious',
+    type: 'boolean',
+    nullable: true,
+    default: false,
+  })
+  isSuspicious: boolean;
+
+  @Column({
+    name: 'reward',
+    type: 'numeric',
+    nullable: true,
+    default: 123.11,
+  })
+  reward: number;
 
   @CreateDateColumn({
     name: 'created_at',

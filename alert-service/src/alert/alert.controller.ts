@@ -39,6 +39,22 @@ export class AlertController {
   }
 
   @MessagePattern({
+    cmd: ALERT_SERVICE_MESSAGE_PATTERN.GET_ALL_COORDINATES,
+  })
+  async getCoordinates(@Ctx() context: RmqContext) {
+    const channel = context.getChannelRef();
+    const message = context.getMessage();
+    channel.ack(message);
+    return this.alertService
+      .getCoordinates()
+      .then((res) => {
+        return res;
+      })
+      .catch((err) => {
+        handleError(err);
+      });
+  }
+  @MessagePattern({
     cmd: ALERT_SERVICE_MESSAGE_PATTERN.GET_ALL,
   })
   async getAllAlerts(
@@ -95,25 +111,25 @@ export class AlertController {
       });
   }
 
-  @MessagePattern({
-    cmd: ALERT_SERVICE_MESSAGE_PATTERN.GET_ALL_FROM_ELASTICSEARCH,
-  })
-  async getAllFromElasticSearch(
-    @Payload() input: GetAlertsInputDto,
-    @Ctx() context: RmqContext,
-  ) {
-    const channel = context.getChannelRef();
-    const message = context.getMessage();
-    channel.ack(message);
-    return this.alertService
-      .getAllFromElasticsearch(input)
-      .then((res) => {
-        return res;
-      })
-      .catch((err) => {
-        handleError(err);
-      });
-  }
+  // @MessagePattern({
+  //   cmd: ALERT_SERVICE_MESSAGE_PATTERN.GET_ALL_FROM_ELASTICSEARCH,
+  // })
+  // async getAllFromElasticSearch(
+  //   @Payload() input: GetAlertsInputDto,
+  //   @Ctx() context: RmqContext,
+  // ) {
+  //   const channel = context.getChannelRef();
+  //   const message = context.getMessage();
+  //   channel.ack(message);
+  //   return this.alertService
+  //     .getAllFromElasticsearch(input)
+  //     .then((res) => {
+  //       return res;
+  //     })
+  //     .catch((err) => {
+  //       handleError(err);
+  //     });
+  // }
 
   @MessagePattern({
     cmd: ALERT_SERVICE_MESSAGE_PATTERN.SEARCH,
@@ -126,7 +142,7 @@ export class AlertController {
     const message = context.getMessage();
     channel.ack(message);
     return this.alertService
-      .search(input)
+      .searchInElasticsearch(input)
       .then((res) => {
         return res;
       })

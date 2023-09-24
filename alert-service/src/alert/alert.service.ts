@@ -1,7 +1,9 @@
 import {
   ACCOUNT_TYPE,
+  ALERT_STATUS,
   BadRequestError,
   GENERIC_MESSAGE,
+  IPaginationFilters,
   IUser,
   UnauthorizedError,
 } from '@cso-org/shared';
@@ -10,8 +12,9 @@ import { Injectable, Logger } from '@nestjs/common';
 import { ElasticsearchService } from '@nestjs/elasticsearch';
 import { Cron } from '@nestjs/schedule';
 import { InjectRepository } from '@nestjs/typeorm';
+import { NotFoundError } from 'rxjs';
 import { SCRAPPER_URLS } from 'src/config/constants';
-import { DataSource, Repository } from 'typeorm';
+import { DataSource, Repository, SelectQueryBuilder } from 'typeorm';
 import { CreateAlertInputDto } from './dtos/input/create-alert.input.dto';
 import { GetAlertsInputDto } from './dtos/input/get-alerts.input.dto';
 import { ImportAlertsInputDto } from './dtos/input/import-alerts.input.dto';
@@ -36,8 +39,11 @@ export class AlertService {
     return this.elasticsearchService.indices.create({ index: this.index });
   }
 
-  async indexAlert(alert: Alert) {
+  async indexAlert(alert: Partial<Alert>) {
     try {
+      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+      // @ts-ignore
+      alert.date = new Date(alert.date);
       const response = await this.elasticsearchService.index({
         index: this.index,
         id: alert.id,
@@ -52,6 +58,9 @@ export class AlertService {
 
   async updateIndexedDocument(updatedAlert: Alert) {
     try {
+      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+      // @ts-ignore
+      updatedAlert.date = new Date(updatedAlert.date);
       await this.elasticsearchService.update({
         index: this.index,
         id: updatedAlert.id,
@@ -65,7 +74,6 @@ export class AlertService {
   }
 
   async deleteIndexedDocument(id: string) {
-    console.log('=====> id: ', id);
     try {
       await this.elasticsearchService.delete({
         index: this.index,
@@ -130,62 +138,139 @@ export class AlertService {
     }
   }
 
-  async getAllFromElasticsearch(input: Partial<GetAlertsInputDto>) {
-    const from = (input.page - 1) * input.limit;
-    const size = input.limit;
-    try {
-      const result = await this.elasticsearchService.search({
-        index: this.index,
-        from,
-        size,
-        query: {
-          term: { alertType: input?.filters?.alertType },
+  // async getAllFromElasticsearch(input: Partial<GetAlertsInputDto>) {
+  //   const from = (input.page - 1) * input.limit;
+  //   const size = input.limit;
+  //   try {
+  //     const result = await this.elasticsearchService.search({
+  //       index: this.index,
+  //       from,
+  //       size,
+  //       query: {
+  //         term: { alertType: input?.filters?.alertType },
+  //       },
+  //     });
+
+  //     const foundAlerts = result.hits.hits.map((hit: any) => hit._source);
+  //     return {
+  //       result: foundAlerts,
+  //       total: result.hits.total['value'],
+  //     };
+  //   } catch (err) {
+  //     this.logger.error(
+  //       `[Alert-Service - getAllFromElasticsearch method]: ${err}`,
+  //     );
+  //     throw new BadRequestError(GENERIC_MESSAGE.RESOURCE_NOT_FOUND);
+  //   }
+  // }
+
+  async searchInElasticsearch(input: Partial<SearchAlertsInputDto>) {
+    const { page, limit, filters } = input;
+    const from = (page - 1) * limit;
+    const size = limit;
+
+    const query: any = {
+      bool: {
+        must: [
+          {
+            multi_match: {
+              query: filters.searchText || '',
+              fields: [
+                'description',
+                'alertType',
+                'icadIdentifier',
+                'petType',
+                'specie',
+                'sex',
+                'breed',
+                'hair',
+                'height',
+                'weight',
+              ],
+            },
+          },
+        ],
+      },
+    };
+
+    // Optional filters
+    if (filters.alertType) {
+      query.bool.must.push({
+        match: { 'alertType.keyword': filters.alertType.toLowerCase() },
+      });
+    }
+
+    if (filters.dateRange && filters.dateRange.length === 2) {
+      query.bool.must.push({
+        range: {
+          alertDate: {
+            gte: filters.dateRange[0],
+            lte: filters.dateRange[1],
+          },
         },
       });
-
-      const foundAlerts = result.hits.hits.map((hit: any) => hit._source);
-      return {
-        result: foundAlerts,
-        total: result.hits.total['value'],
-      };
-    } catch (err) {
-      this.logger.error(
-        `[Alert-Service - getAllFromElasticsearch method]: ${err}`,
-      );
-      throw new BadRequestError(GENERIC_MESSAGE.RESOURCE_NOT_FOUND);
     }
-  }
 
-  async search(input: Partial<SearchAlertsInputDto>) {
-    const from = (input.page - 1) * input.limit;
-    const size = input.limit;
+    if (filters.breeds && filters.breeds.length > 0) {
+      const lowercaseBreeds = filters.breeds.map((breed) =>
+        breed.toLowerCase(),
+      );
+      query.bool.must.push({ terms: { 'breed.keyword': lowercaseBreeds } });
+    }
+
+    if (filters.suspicious !== undefined) {
+      query.bool.must.push({ match: { isSuspicious: filters.suspicious } });
+    }
+
+    // if (filters.cities && filters.cities.length > 0) {
+    //   const lowercaseCities = filters.cities.map((city) => city.toLowerCase());
+    //   query.bool.must.push({
+    //     nested: {
+    //       path: 'location',
+    //       query: {
+    //         match: { 'location.city.keyword': lowercaseCities },
+    //       },
+    //     },
+    //   });
+    // }
+
+    // if (filters.departmentCodes && filters.departmentCodes.length > 0) {
+    //   const lowercaseDepartmentCodes = filters.departmentCodes.map((code) =>
+    //     code.toLowerCase(),
+    //   );
+    //   query.bool.must.push({
+    //     terms: { 'departmentCode.keyword': lowercaseDepartmentCodes },
+    //   });
+    // }
+
+    if (filters.species && filters.species.length > 0) {
+      const lowercaseSpecies = filters.species.map((specie) =>
+        specie.toLowerCase(),
+      );
+      query.bool.must.push({ terms: { 'specie.keyword': lowercaseSpecies } });
+    }
+
+    if (filters.rewardRange && filters.rewardRange.length === 2) {
+      query.bool.must.push({
+        range: {
+          reward: {
+            gte: filters.rewardRange[0],
+            lte: filters.rewardRange[1],
+          },
+        },
+      });
+    }
 
     const response = await this.elasticsearchService.search({
       index: this.index,
       from,
       size,
       body: {
-        query: {
-          multi_match: {
-            query: input?.filters?.searchText ?? '',
-            fields: [
-              'description',
-              'alertType',
-              'description',
-              'icadIdentifier',
-              'petType',
-              'specie',
-              'sex',
-              'breed',
-              'hair',
-              'height',
-              'weight',
-            ],
-          },
-        },
+        query,
       },
     });
 
+    // Process and return the response as needed
     const hits = response.hits.hits;
     const foundAlerts = hits.map((item) => item._source);
 
@@ -201,21 +286,83 @@ export class AlertService {
     await queryRunner.startTransaction();
 
     try {
+      if (
+        input.status === ALERT_STATUS.PUBLISHED &&
+        input.isFromAppUser === true
+      ) {
+        this.checkRequired(input);
+      }
+
       const newAlert = queryRunner.manager.create(Alert, input);
       const savedAlert = await queryRunner.manager.save(newAlert);
       await queryRunner.commitTransaction();
-      await this.indexAlert(savedAlert);
-
+      if (savedAlert.status === ALERT_STATUS.PUBLISHED) {
+        await this.indexAlert(savedAlert);
+      }
       return {
         message: GENERIC_MESSAGE.RESOURCE_CREATED,
       };
     } catch (err) {
       await queryRunner.rollbackTransaction();
       this.logger.error(`[Alert-Service - createAlert method]: ${err}`);
-
       throw new BadRequestError(GENERIC_MESSAGE.RESOURCE_NOT_CREATED);
     } finally {
       await queryRunner.release();
+    }
+  }
+
+  checkRequired(input: Partial<CreateAlertInputDto>) {
+    let requiredFields = [
+      'publisherId',
+      'isFromAppUser',
+      'status',
+      'alertType',
+      'petType',
+      'specie',
+      'age',
+      'ageExpressedIn',
+      'sex',
+      'breed',
+      'height',
+      'weight',
+      'hair',
+      'hasTatoo',
+      'hasNecklace',
+      'hasMicrochip',
+      'isSterilized',
+      'location',
+      'date',
+      'isSuspicious',
+    ];
+
+    if (!input.publisherEmail && !input.publisherPhoneNumber) {
+      throw new BadRequestError(GENERIC_MESSAGE.MISSING_FIELDS);
+    }
+
+    if (input.hasNecklace) {
+      requiredFields = [...requiredFields, 'necklaceMaterial', 'necklaceColor'];
+    }
+
+    for (const prop of requiredFields) {
+      if (!(prop in input)) {
+        throw new BadRequestError(GENERIC_MESSAGE.MISSING_FIELDS);
+      }
+    }
+
+    if (input.location) {
+      if (
+        !input.location.address &&
+        !input.location.city &&
+        !input.location.country &&
+        !input.location.departmentCode &&
+        !input.location.departmentName &&
+        !input.location.postalCode &&
+        !input.location.coords &&
+        !input.location.coords.latitude &&
+        !input.location.coords.longitude
+      ) {
+        throw new BadRequestError(GENERIC_MESSAGE.MISSING_FIELDS);
+      }
     }
   }
 
@@ -223,22 +370,85 @@ export class AlertService {
     input: Partial<GetAlertsInputDto>,
   ): Promise<PaginationOutputDto> {
     try {
-      const [results, total] = await this.repo.findAndCount({
-        where: {
-          alertType: input?.filters?.alertType,
-        },
-        take: input.limit,
-        skip: input.limit * (input.page - 1),
-      });
+      const queryBuilder = this.buildQueryFilters(input.filters);
+
+      const [alerts, total] = await queryBuilder
+        .skip((input.page - 1) * input.limit)
+        .take(input.limit)
+        .getManyAndCount();
 
       return {
-        result: results,
-        total: total,
+        result: alerts,
+        total,
       };
     } catch (err) {
       this.logger.error(`[Alert-Service - getAllAlerts method]: ${err}`);
       throw new BadRequestError(GENERIC_MESSAGE.RESOURCE_FOUND);
     }
+  }
+
+  buildQueryFilters(filters: IPaginationFilters): SelectQueryBuilder<Alert> {
+    const queryBuilder = this.repo.createQueryBuilder('alert');
+
+    if (filters.alertType) {
+      queryBuilder.andWhere('LOWER(alert.alertType) = :alertType', {
+        alertType: filters.alertType.toLowerCase(),
+      });
+    }
+
+    queryBuilder.andWhere('LOWER(alert.status) = :status', {
+      status: ALERT_STATUS.PUBLISHED.toLowerCase(),
+    });
+
+    if (filters.breeds && filters.breeds.length > 0) {
+      queryBuilder.andWhere('LOWER(alert.breed) IN (:...breeds)', {
+        breeds: filters.breeds.map((b) => b.toLowerCase()),
+      });
+    }
+
+    if (filters.species && filters.species.length > 0) {
+      queryBuilder.andWhere('LOWER(alert.specie) IN (:...species)', {
+        species: filters.species.map((specie) => specie.toLowerCase()),
+      });
+    }
+
+    if (filters.suspicious !== undefined) {
+      queryBuilder.andWhere('alert.isSuspicious = :isSuspicious', {
+        isSuspicious: filters.suspicious,
+      });
+    }
+
+    if (filters.cities && filters.cities.length > 0) {
+      queryBuilder.andWhere(
+        "LOWER(CAST(alert.location AS json)->>'city') IN (:...cities)",
+        {
+          cities: filters.cities.map((city) => city.toLowerCase()),
+        },
+      );
+    }
+
+    if (filters.departmentCodes && filters.departmentCodes.length > 0) {
+      queryBuilder.andWhere(
+        `LOWER(CAST(alert.location AS json)->>'departmentCode') IN (:...departmentCodes)`,
+        {
+          departmentCodes: filters.departmentCodes.map((code) =>
+            code.toLowerCase(),
+          ),
+        },
+      );
+    }
+
+    if (filters.rewardRange && filters.rewardRange.length === 2) {
+      const [minReward, maxReward] = filters.rewardRange;
+      queryBuilder.andWhere(
+        'alert.reward >= :minReward AND alert.reward <= :maxReward',
+        {
+          minReward,
+          maxReward,
+        },
+      );
+    }
+    return queryBuilder;
   }
 
   async importAlerts(input: ImportAlertsInputDto) {
@@ -257,6 +467,7 @@ export class AlertService {
       }
       await queryRunner.commitTransaction();
 
+      this.logger.debug('=====> IMPORTED: ', totalSaved);
       return {
         message: GENERIC_MESSAGE.RESOURCES_IMPORTED,
         totalSavedAlerts: totalSaved,
@@ -291,7 +502,8 @@ export class AlertService {
 
     if (
       foundAlert.publisherId !== user.id &&
-      user.accountType !== ACCOUNT_TYPE.ADMIN
+      user.accountType !== ACCOUNT_TYPE.ADMIN &&
+      user.accountType !== ACCOUNT_TYPE.MODERATOR
     ) {
       throw new UnauthorizedError('action.not.authorized');
     }
@@ -313,7 +525,8 @@ export class AlertService {
 
     if (
       foundAlert.publisherId !== user.id &&
-      user.accountType !== ACCOUNT_TYPE.ADMIN
+      user.accountType !== ACCOUNT_TYPE.ADMIN &&
+      user.accountType !== ACCOUNT_TYPE.MODERATOR
     ) {
       throw new UnauthorizedError('action.not.authorized');
     }
@@ -331,7 +544,40 @@ export class AlertService {
     }
   }
 
-  @Cron('49 0 * * *', {
+  async getCoordinates() {
+    try {
+      const foundAlerts = await this.repo
+        .createQueryBuilder('alert')
+        .select(['alert.id', 'alert.location'])
+        .where('alert.location IS NOT NULL')
+        .getMany();
+
+      const result = foundAlerts.map((alert) => {
+        if (
+          alert.location.coords &&
+          alert.location.coords.latitude &&
+          alert.location.coords.longitude
+        ) {
+          return {
+            id: alert.id,
+            c: {
+              x: alert?.location?.coords?.latitude,
+              y: alert?.location?.coords?.latitude,
+            },
+          };
+        }
+      });
+
+      return {
+        result,
+        total: result.length,
+      };
+    } catch (err) {
+      throw new NotFoundError(GENERIC_MESSAGE.RESOURCE_NOT_FOUND);
+    }
+  }
+
+  @Cron('30 3 * * *', {
     name: 'scrapper_cron',
     timeZone: 'Europe/Paris',
   })

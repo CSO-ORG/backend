@@ -20,6 +20,7 @@ export class IsValidLocationConstraint implements ValidatorConstraintInterface {
       'postalCode',
       'departmentName',
       'departmentCode',
+      'coords',
     ];
 
     for (const prop of expectedProperties) {
