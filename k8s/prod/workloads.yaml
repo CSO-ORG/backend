@@ -1,4 +1,38 @@
 # # # # # # # # # # # # # # # # # # # # # # # # # # # #
+#                   Elasticsearch                     #
+# # # # # # # # # # # # # # # # # # # # # # # # # # # #
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: elasticsearch
+spec:
+  selector:
+    matchLabels:
+      app: elasticsearch
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app: elasticsearch
+    spec:
+      containers:
+        - name: elasticsearch
+          image: docker.elastic.co/elasticsearch/elasticsearch:8.10.2
+          env:
+            - name: ELASTIC_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: global-secrets
+                  key: ELASTIC_PASSWORD
+          volumeMounts:
+            - name: elasticsearch-persistent-storage
+              mountPath: /usr/share/elasticsearch/data
+      volumes:
+        - name: elasticsearch-persistent-storage
+          persistentVolumeClaim:
+            claimName: elasticsearch-pvc
+---
+# # # # # # # # # # # # # # # # # # # # # # # # # # # #
 #                     RABBITMQ                        #
 # # # # # # # # # # # # # # # # # # # # # # # # # # # #
 apiVersion: apps/v1
@@ -202,7 +236,7 @@ spec:
     spec:
       containers:
         - name: gateway
-          image: dreion/k8s-cso-gateway:release-0.0.1
+          image: dreion/k8s-cso-gateway:release-0.0.2
           env:
             - name: PORT
               valueFrom:
@@ -295,7 +329,7 @@ spec:
     spec:
       containers:
         - name: account-microservice
-          image: dreion/k8s-cso-account-microservice:release-0.0.1
+          image: dreion/k8s-cso-account-microservice:release-0.0.2
           env:
             - name: SERVICE_PORT
               valueFrom:
@@ -438,7 +472,7 @@ spec:
     spec:
       containers:
         - name: alert-microservice
-          image: dreion/k8s-cso-alert-microservice:release-0.0.1
+          image: dreion/k8s-cso-alert-microservice:release-0.0.2
           env:
             - name: POSTGRES_USER
               valueFrom:
@@ -535,7 +569,7 @@ spec:
     spec:
       containers:
         - name: pet-alert-scraper
-          image: dreion/k8s-cso-pet-alert-scraper:release-0.0.1
+          image: dreion/k8s-cso-pet-alert-scraper:release-0.0.2
           env:
             - name: GATEWAY_URL
               valueFrom:
