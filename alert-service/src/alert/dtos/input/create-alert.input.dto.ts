@@ -1,106 +1,86 @@
-import {
-  AGE_EXPRESSED_IN,
-  ALERT_CATEGORY,
-  ALERT_STATUS,
-  HAIR_TYPE,
-  HEIGHT_CATEGORY,
-  ILOCATION,
-  NECKLACE_MATERIAL_CATEGORY,
-  PET_CATEGORY,
-  SEX_CATEGORY,
-  WEIGHT_CATEGORY,
-} from '@cso-org/shared';
+import { ILOCATION } from '@cso-org/shared';
 import {
   ArrayMaxSize,
   IsArray,
   IsBoolean,
-  IsEnum,
   IsNotEmpty,
   IsNumber,
   IsOptional,
   IsString,
-  MaxLength,
-  Min,
 } from 'class-validator';
-import { IsEmailRequired } from 'src/alert/validators/email-required.validator';
-import { IsValidLocation } from 'src/alert/validators/location.validator';
-import { IsNameRequired } from 'src/alert/validators/name-required.validator';
-import { IsPhoneNumberRequired } from 'src/alert/validators/phone-number-required.validator';
 
 export class CreateAlertInputDto {
   @IsString()
   @IsNotEmpty()
   publisherId: string;
 
-  @IsPhoneNumberRequired()
+  @IsString()
+  @IsOptional()
   publisherPhoneNumber: string;
 
-  @IsEmailRequired()
+  @IsString()
+  @IsOptional()
   publisherEmail: string;
 
   @IsBoolean()
   @IsNotEmpty()
   isFromAppUser: boolean;
 
-  @IsNameRequired()
+  @IsString()
+  @IsOptional()
   name: string;
 
   @IsString()
-  @MaxLength(30000)
-  @IsNotEmpty()
+  @IsOptional()
   description: string;
 
-  @IsEnum(ALERT_STATUS)
+  @IsString()
   @IsNotEmpty()
-  status: ALERT_STATUS;
-
-  @IsEnum(ALERT_CATEGORY)
-  @IsNotEmpty()
-  alertType: ALERT_CATEGORY;
+  status: string;
 
   @IsString()
-  @MaxLength(100)
+  @IsNotEmpty()
+  alertType: string;
+
+  @IsString()
   @IsOptional()
   icadIdentifier: string;
 
-  @IsEnum(PET_CATEGORY)
-  @IsNotEmpty()
-  petType: PET_CATEGORY;
+  @IsString()
+  @IsOptional()
+  petType: string;
 
   @IsString()
-  @MaxLength(100)
   @IsOptional()
   specie: string;
 
   @IsNumber()
-  @Min(0)
   @IsOptional()
   age: number;
 
-  @IsEnum(AGE_EXPRESSED_IN)
+  @IsString()
   @IsOptional()
-  ageExpressedIn: AGE_EXPRESSED_IN;
-
-  @IsEnum(SEX_CATEGORY)
-  @IsOptional()
-  sex: SEX_CATEGORY;
+  ageExpressedIn: string;
 
   @IsString()
-  @MaxLength(100)
+  @IsOptional()
+  sex: string;
+
+  @IsString()
   @IsOptional()
   breed: string;
 
-  @IsEnum(HEIGHT_CATEGORY)
+  @IsString()
   @IsOptional()
-  height: HEIGHT_CATEGORY;
+  height: string;
 
-  @IsEnum(WEIGHT_CATEGORY)
+  @IsString()
   @IsOptional()
-  weight: WEIGHT_CATEGORY;
+  weight: string;
 
-  @IsEnum(HAIR_TYPE)
+  @IsString()
   @IsOptional()
-  hair: HAIR_TYPE;
+  hair: string;
 
   @IsArray()
   @ArrayMaxSize(5)
@@ -120,9 +100,9 @@ export class CreateAlertInputDto {
   @IsOptional()
   hasNecklace: boolean;
 
-  @IsEnum(NECKLACE_MATERIAL_CATEGORY)
+  @IsString()
   @IsOptional()
-  necklaceMaterial: NECKLACE_MATERIAL_CATEGORY;
+  necklaceMaterial: string;
 
   @IsString()
   @IsOptional()
@@ -136,10 +116,18 @@ export class CreateAlertInputDto {
   @IsOptional()
   isSterilized: boolean;
 
-  @IsValidLocation()
+  @IsOptional()
   location: ILOCATION;
 
   @IsString()
   @IsOptional()
   date: string;
+
+  @IsBoolean()
+  @IsOptional()
+  isSuspicious: boolean;
+
+  @IsNumber()
+  @IsOptional()
+  reward: number;
 }

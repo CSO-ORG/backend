@@ -5,7 +5,7 @@ import {
   HAIR_TYPE,
   HEIGHT_CATEGORY,
   ILOCATION,
-  NECKLACE_MATERIAL_CATEGORY,
+  NECKLACE_CATEGORY,
   PET_CATEGORY,
   SEX_CATEGORY,
   WEIGHT_CATEGORY,
@@ -192,10 +192,10 @@ export class AlertOutputDto {
   @ApiProperty({
     type: String,
     description: 'the category of necklace material of the pet',
-    enum: NECKLACE_MATERIAL_CATEGORY,
-    default: NECKLACE_MATERIAL_CATEGORY.CHAIN,
+    enum: NECKLACE_CATEGORY,
+    default: NECKLACE_CATEGORY.CHOKE_CHAIN,
   })
-  necklaceMaterial: NECKLACE_MATERIAL_CATEGORY;
+  necklaceMaterial: NECKLACE_CATEGORY;
 
   @ApiProperty({
     type: String,
