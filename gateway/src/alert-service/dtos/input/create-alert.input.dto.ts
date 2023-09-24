@@ -5,7 +5,7 @@ import {
   HAIR_TYPE,
   HEIGHT_CATEGORY,
   ILOCATION,
-  NECKLACE_MATERIAL_CATEGORY,
+  NECKLACE_CATEGORY,
   PET_CATEGORY,
   SEX_CATEGORY,
   WEIGHT_CATEGORY,
@@ -228,7 +228,7 @@ export class CreateAlertInputDto {
   @ApiProperty({
     type: String,
     description: 'the category of necklace material of the pet',
-    default: NECKLACE_MATERIAL_CATEGORY.CHAIN,
+    default: NECKLACE_CATEGORY.CHOKE_CHAIN,
   })
   @IsString()
   @IsOptional()
