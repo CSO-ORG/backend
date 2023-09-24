@@ -42,7 +42,7 @@
     "vitest": "0.28.5"
   },
   "dependencies": {
-    "@cso-org/shared": "^1.0.28",
+    "@cso-org/shared": "^1.0.29",
     "@mapbox/mapbox-sdk": "^0.15.3",
     "amqplib": "^0.10.3",
     "axios": "^1.4.0",
