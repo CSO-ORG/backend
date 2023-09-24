@@ -12,6 +12,7 @@ import { Injectable, Logger } from '@nestjs/common';
 import { ElasticsearchService } from '@nestjs/elasticsearch';
 import { Cron } from '@nestjs/schedule';
 import { InjectRepository } from '@nestjs/typeorm';
+import * as dotenv from 'dotenv';
 import { NotFoundError } from 'rxjs';
 import { SCRAPPER_URLS } from 'src/config/constants';
 import { DataSource, Repository, SelectQueryBuilder } from 'typeorm';
@@ -22,6 +23,7 @@ import { SearchAlertsInputDto } from './dtos/input/search-alerts.input.dto';
 import { UpdateAlertInputDto } from './dtos/input/update-alert.input.dto';
 import { PaginationOutputDto } from './dtos/output/pagination.output.dto';
 import { Alert } from './entities/alert.entity';
+dotenv.config();
 @Injectable()
 export class AlertService {
   private readonly logger = new Logger(AlertService.name);
@@ -296,7 +298,10 @@ export class AlertService {
       const newAlert = queryRunner.manager.create(Alert, input);
       const savedAlert = await queryRunner.manager.save(newAlert);
       await queryRunner.commitTransaction();
-      if (savedAlert.status === ALERT_STATUS.PUBLISHED) {
+      if (
+        savedAlert.status === ALERT_STATUS.PUBLISHED &&
+        process.env.ENVIRONMENT === 'PROD'
+      ) {
         await this.indexAlert(savedAlert);
       }
       return {
@@ -462,7 +467,9 @@ export class AlertService {
         const batch = input.alerts.slice(i, i + this.batchSize);
         const alertEntities = await this.repo.create(batch);
         await queryRunner.manager.save(Alert, alertEntities);
-        await this.bulkIndex(alertEntities);
+        if (process.env.ENVIRONMENT === 'PROD') {
+          await this.bulkIndex(alertEntities);
+        }
         totalSaved += alertEntities.length;
       }
       await queryRunner.commitTransaction();
@@ -511,7 +518,9 @@ export class AlertService {
     try {
       Object.assign(foundAlert, data);
       const updatedUser = await this.repo.save(foundAlert);
-      await this.updateIndexedDocument(updatedUser);
+      if (process.env.ENVIRONMENT === 'PROD') {
+        await this.updateIndexedDocument(updatedUser);
+      }
 
       return updatedUser;
     } catch (err) {
@@ -533,8 +542,9 @@ export class AlertService {
 
     try {
       await this.repo.remove(foundAlert);
-      await this.deleteIndexedDocument(id);
-
+      if (process.env.ENVIRONMENT === 'PROD') {
+        await this.deleteIndexedDocument(id);
+      }
       return {
         message: GENERIC_MESSAGE.RESOURCE_DELETED,
       };
