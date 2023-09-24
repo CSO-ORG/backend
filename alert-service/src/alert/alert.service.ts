@@ -298,12 +298,12 @@ export class AlertService {
       const newAlert = queryRunner.manager.create(Alert, input);
       const savedAlert = await queryRunner.manager.save(newAlert);
       await queryRunner.commitTransaction();
-      if (
-        savedAlert.status === ALERT_STATUS.PUBLISHED &&
-        process.env.ENVIRONMENT === 'PROD'
-      ) {
-        await this.indexAlert(savedAlert);
-      }
+      // if (
+      //   savedAlert.status === ALERT_STATUS.PUBLISHED &&
+      //   process.env.ENVIRONMENT === 'PROD'
+      // ) {
+      //   await this.indexAlert(savedAlert);
+      // }
       return {
         message: GENERIC_MESSAGE.RESOURCE_CREATED,
       };
@@ -467,9 +467,9 @@ export class AlertService {
         const batch = input.alerts.slice(i, i + this.batchSize);
         const alertEntities = await this.repo.create(batch);
         await queryRunner.manager.save(Alert, alertEntities);
-        if (process.env.ENVIRONMENT === 'PROD') {
-          await this.bulkIndex(alertEntities);
-        }
+        // if (process.env.ENVIRONMENT === 'PROD') {
+        //   await this.bulkIndex(alertEntities);
+        // }
         totalSaved += alertEntities.length;
       }
       await queryRunner.commitTransaction();
@@ -518,9 +518,9 @@ export class AlertService {
     try {
       Object.assign(foundAlert, data);
       const updatedUser = await this.repo.save(foundAlert);
-      if (process.env.ENVIRONMENT === 'PROD') {
-        await this.updateIndexedDocument(updatedUser);
-      }
+      // if (process.env.ENVIRONMENT === 'PROD') {
+      //   await this.updateIndexedDocument(updatedUser);
+      // }
 
       return updatedUser;
     } catch (err) {
@@ -542,9 +542,9 @@ export class AlertService {
 
     try {
       await this.repo.remove(foundAlert);
-      if (process.env.ENVIRONMENT === 'PROD') {
-        await this.deleteIndexedDocument(id);
-      }
+      // if (process.env.ENVIRONMENT === 'PROD') {
+      //   await this.deleteIndexedDocument(id);
+      // }
       return {
         message: GENERIC_MESSAGE.RESOURCE_DELETED,
       };
