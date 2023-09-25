@@ -10,6 +10,7 @@ import { handleError } from 'src/handlers/error.handler';
 import { AlertService } from './alert.service';
 import { CreateAlertInputDto } from './dtos/input/create-alert.input.dto';
 import { GetAlertsInputDto } from './dtos/input/get-alerts.input.dto';
+import { GetCoordinatesInputDto } from './dtos/input/get-coordinates.input.dto';
 import { ImportAlertsInputDto } from './dtos/input/import-alerts.input.dto';
 import { SearchAlertsInputDto } from './dtos/input/search-alerts.input.dto';
 import { UpdateAlertInputDto } from './dtos/input/update-alert.input.dto';
@@ -41,12 +42,15 @@ export class AlertController {
   @MessagePattern({
     cmd: ALERT_SERVICE_MESSAGE_PATTERN.GET_ALL_COORDINATES,
   })
-  async getCoordinates(@Ctx() context: RmqContext) {
+  async getCoordinates(
+    @Payload() input: GetCoordinatesInputDto,
+    @Ctx() context: RmqContext,
+  ) {
     const channel = context.getChannelRef();
     const message = context.getMessage();
     channel.ack(message);
     return this.alertService
-      .getCoordinates()
+      .getCoordinates(input.filters)
       .then((res) => {
         return res;
       })

@@ -5,7 +5,8 @@ import { convertPetAlertToAlert } from '@services/scrapper'
 import { mkdirSync, writeFileSync } from 'fs'
 import { parentPort, workerData } from 'worker_threads'
 
-const { pageToFetchs, workerName, name, code, animal }: WorkerData = workerData
+const { pageToFetchs, workerName, name, code, animal, date }: WorkerData =
+  workerData
 
 for (const page of pageToFetchs) {
   const petAlerts = await fetchAlertsByPage(page, code, name, animal).catch(
@@ -19,15 +20,32 @@ for (const page of pageToFetchs) {
     petAlerts.map(async (alert) => await convertPetAlertToAlert(alert)),
   )
 
+  let alertsToKeep = alerts
+  if (date) {
+    const dateToCompare = new Date(Number(date)).getTime()
+    alertsToKeep = alerts.filter((alert) => {
+      if (!alert.date) return false
+      const alertDate = new Date(alert.date).getTime()
+      return alertDate >= dateToCompare
+    })
+  }
+
   logger.trace(
-    `[worker - ${workerName}] on ${name} for ${animal} - page ${page} - ${alerts.length} alerts`,
+    `[worker - ${workerName}] on ${name} for ${animal} - page ${page} - ${alertsToKeep.length} alerts`,
   )
 
   mkdirSync(`./data/${animal}/${name}/`, { recursive: true })
   writeFileSync(
     `./data/${animal}/${name}/alerts-${page}.json`,
-    JSON.stringify(alerts, null, 2),
+    JSON.stringify(alertsToKeep, null, 2),
   )
+
+  if (alertsToKeep.length === 0) {
+    logger.info(
+      `[STOP] [worker - ${workerName}] on ${name} for ${animal} - page ${page} - ${alertsToKeep.length} alerts`,
+    )
+    break
+  }
 }
 
 parentPort?.postMessage(workerName)
