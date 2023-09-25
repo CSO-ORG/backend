@@ -19,6 +19,7 @@ import { AccessTokenGuard } from 'src/guards/access-token.guard';
 import { handleError } from 'src/handlers/error.handler';
 import { CreateAlertInputDto } from './dtos/input/create-alert.input.dto';
 import { GetAlertsInputDto } from './dtos/input/get-alerts.input.dto';
+import { GetCoordinatesInputDto } from './dtos/input/get-coordinates.input.dto';
 import { ImportAlertsInputDto } from './dtos/input/import-alerts.input.dto';
 import { SearchAlertsInputDto } from './dtos/input/search-alerts.input.dto';
 import { UpdateAlertInputDto } from './dtos/input/update-alert.input.dto';
@@ -75,15 +76,15 @@ export class AlertServiceController {
     return this.sendRequest(ALERT_SERVICE_MESSAGE_PATTERN.CREATE_INDEX, {});
   }
 
-  @Get('get-coordinates')
+  @Post('get-coordinates')
   @HttpCode(200)
   @ApiOkResponse({
     description: 'get all alert coordinates',
   })
-  async getCoordinates() {
+  async getCoordinates(@Body() body: GetCoordinatesInputDto) {
     return this.sendRequest(
       ALERT_SERVICE_MESSAGE_PATTERN.GET_ALL_COORDINATES,
-      {},
+      body,
     );
   }
 

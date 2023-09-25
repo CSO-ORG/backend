@@ -554,12 +554,13 @@ export class AlertService {
     }
   }
 
-  async getCoordinates() {
+  async getCoordinates(filters: IPaginationFilters) {
     try {
       const foundAlerts = await this.repo
         .createQueryBuilder('alert')
         .select(['alert.id', 'alert.location'])
         .where('alert.location IS NOT NULL')
+        .where('alert.alertType = :alertType', { alertType: filters.alertType })
         .getMany();
 
       const result = foundAlerts.map((alert) => {
@@ -594,12 +595,18 @@ export class AlertService {
   handleCron() {
     const currentDateTime = new Date();
     // call scrappers to launch scrapping;
-    this.httpService.get(SCRAPPER_URLS.petAlert).subscribe((res) => {
-      this.logger.debug(
-        `======> ${currentDateTime.toLocaleString('fr-FR', {
-          timeZone: 'Europe/Paris',
-        })}: ${res.data}`,
-      );
-    });
+    this.httpService
+      .get(
+        `${SCRAPPER_URLS.petAlert}?date=${Date.parse(
+          currentDateTime.toString(),
+        )}`,
+      )
+      .subscribe((res) => {
+        this.logger.debug(
+          `======> ${currentDateTime.toLocaleString('fr-FR', {
+            timeZone: 'Europe/Paris',
+          })}: ${res.data}`,
+        );
+      });
   }
 }
