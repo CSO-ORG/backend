@@ -93,13 +93,13 @@ async function launchScrap(
 
         const targetSpecificAnimalTypeUrl = `${animal}-perdu/pet-alert-${code}-${name}`
         const filters: PetAlertApiFilters = {
-          page: 1,
+          page: 0,
           type: 'lost',
         }
         const urlWithFilters = addQueryToUrl(
           new URL(CONFIG.URL_TO_FETCH + targetSpecificAnimalTypeUrl),
           {
-            filters: JSON.stringify(filters),
+            filters,
           },
         ).toString()
         const response = await axios(urlWithFilters)
