@@ -571,7 +571,7 @@ export class AlertService {
           return {
             id: alert.id,
             c: {
-              x: alert?.location?.coords?.latitude,
+              x: alert?.location?.coords?.longitude,
               y: alert?.location?.coords?.latitude,
             },
           };

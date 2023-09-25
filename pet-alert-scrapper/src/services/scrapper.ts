@@ -71,6 +71,7 @@ export const convertPetAlertToAlert = async (
     const coords = await geocodeAddress(
       `${petAlert?.address_street} ${petAlert?.address_city_nom} ${petAlert?.address_city_CP} ${petAlert?.address_country}`,
     )
+    console.log('🚀 ~ file: scrapper.ts:74 ~ coords:', coords)
 
     petAlert.coords_lat = coords?.latitude
     petAlert.coords_lng = coords?.longitude
