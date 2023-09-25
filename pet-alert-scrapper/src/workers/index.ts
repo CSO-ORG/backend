@@ -30,8 +30,6 @@ for (const page of pageToFetchs) {
     })
   }
 
-  console.log('🚀 ~ file: index.ts:24 ~ alertsToKeep:', alertsToKeep)
-
   logger.trace(
     `[worker - ${workerName}] on ${name} for ${animal} - page ${page} - ${alertsToKeep.length} alerts`,
   )
