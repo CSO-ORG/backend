@@ -2,7 +2,6 @@ import { Alert, PetAlertData, WorkerData } from '@interfaces/index'
 import { isString, isUrl } from '@utils/type-guards'
 import { Worker } from 'worker_threads'
 import axios from 'axios'
-import { logger } from './logger'
 import * as dotenv from 'dotenv'
 dotenv.config()
 /**
@@ -47,6 +46,7 @@ export const invokeWorker = (
   sitePages: number,
   currentWorker: string,
   animal: 'chien' | 'chat',
+  date?: string,
 ) => {
   return new Worker('./dist/workers/index.js', {
     execArgv:
@@ -59,6 +59,7 @@ export const invokeWorker = (
       name,
       code,
       animal,
+      date,
     } satisfies WorkerData,
   })
 }
