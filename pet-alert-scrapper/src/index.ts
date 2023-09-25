@@ -17,6 +17,7 @@ import { performance } from 'perf_hooks'
 import 'reflect-metadata'
 
 let isRunning = false
+let countAlerts = 0
 const server = http.createServer(launchScrap)
 server.listen(process.env.PORT || 3000)
 
@@ -136,6 +137,7 @@ async function launchScrap(
 
         worker.on('message', (workerName: string) => {
           activeWorkers.delete(workerName)
+          countAlerts = countAlerts + totalAlerts
           logger.info(
             `[STOP] [worker - ${workerName} on ${name} for ${animal}] is done. Get ${sitePages} pages with ${totalAlerts} alerts.`,
           )
@@ -144,8 +146,10 @@ async function launchScrap(
     }
 
     logger.info('All workers are done')
+    logger.info(`Total alerts: ${countAlerts}`)
 
     const end = performance.now()
+
     logger.info(`Execution time: ${((end - start) / 1000).toFixed(2)} seconds`)
 
     logger.info('Start merging files')
