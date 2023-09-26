@@ -93,3 +93,19 @@ spec:
     - name: endpoint
       port: 3000
   type: ClusterIP
+
+---
+# # # # # # # # # # # # # # # # # # # # # # # # # # # #
+#                     FRONTEND                        #
+# # # # # # # # # # # # # # # # # # # # # # # # # # # #
+apiVersion: v1
+kind: Service
+metadata:
+  name: cso-frontend
+spec:
+  selector:
+    app: frontend
+  ports:
+    - name: endpoint
+      port: 80
+  type: ClusterIP
