@@ -588,25 +588,23 @@ export class AlertService {
     }
   }
 
-  @Cron('10 8 * * *', {
+  @Cron('20 11 * * *', {
     name: 'scrapper_cron',
     timeZone: 'Europe/Paris',
   })
   handleCron() {
     const currentDateTime = new Date();
     // call scrappers to launch scrapping;
-    this.httpService
-      .get(
-        `${SCRAPPER_URLS.petAlert}?date=${Date.parse(
-          currentDateTime.toString(),
-        )}`,
-      )
-      .subscribe((res) => {
-        this.logger.debug(
-          `======> ${currentDateTime.toLocaleString('fr-FR', {
-            timeZone: 'Europe/Paris',
-          })}: ${res.data}`,
-        );
-      });
+    const url = `${SCRAPPER_URLS.petAlert}?date=${Date.parse(
+      currentDateTime.toString(),
+    )}`;
+    this.logger.debug('=======> SCRAP URL: ' + url);
+    this.httpService.get(url).subscribe((res) => {
+      this.logger.debug(
+        `======> ${currentDateTime.toLocaleString('fr-FR', {
+          timeZone: 'Europe/Paris',
+        })}: ${res.data}`,
+      );
+    });
   }
 }
