@@ -23,13 +23,10 @@ spec:
                 name: cso-gateway
                 port:
                   number: 8080
-    - host: garault.online
-      http:
-        paths:
-          - path: /queue
+          - path: /
             pathType: Prefix
             backend:
               service:
-                name: cso-rabbitmq
+                name: cso-frontend
                 port:
-                  number: 15672
+                  number: 80     

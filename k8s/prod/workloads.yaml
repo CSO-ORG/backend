@@ -581,3 +581,24 @@ spec:
                 secretKeyRef:
                   name: global-secrets
                   key: MAPBOX_TOKEN      
+---
+# # # # # # # # # # # # # # # # # # # # # # # # # # # #
+#                     FRONTEND                        #
+# # # # # # # # # # # # # # # # # # # # # # # # # # # #
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: frontend
+spec:
+  selector:
+    matchLabels:
+      app: frontend
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app: frontend
+    spec:
+      containers:
+        - name: frontend
+          image: dreion/k8s-cso-front:release-0.0.3
