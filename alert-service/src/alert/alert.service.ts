@@ -392,12 +392,23 @@ export class AlertService {
     }
   }
 
-  buildQueryFilters(filters: IPaginationFilters): SelectQueryBuilder<Alert> {
+  buildQueryFilters(
+    filters: IPaginationFilters,
+    isCoords = false,
+  ): SelectQueryBuilder<Alert> {
     const queryBuilder = this.repo.createQueryBuilder('alert');
 
     if (filters.alertType) {
       queryBuilder.andWhere('LOWER(alert.alertType) = :alertType', {
         alertType: filters.alertType.toLowerCase(),
+      });
+    }
+
+    if (isCoords) {
+      queryBuilder.select(['alert.id', 'alert.location']);
+      queryBuilder.where('alert.location IS NOT NULL');
+      queryBuilder.where('alert.alertType = :alertType', {
+        alertType: filters.alertType,
       });
     }
 
@@ -556,12 +567,9 @@ export class AlertService {
 
   async getCoordinates(filters: IPaginationFilters) {
     try {
-      const foundAlerts = await this.repo
-        .createQueryBuilder('alert')
-        .select(['alert.id', 'alert.location'])
-        .where('alert.location IS NOT NULL')
-        .where('alert.alertType = :alertType', { alertType: filters.alertType })
-        .getMany();
+      const queryBuilder = this.buildQueryFilters(filters, true);
+
+      const foundAlerts = await queryBuilder.getMany();
 
       const result = foundAlerts.map((alert) => {
         if (
