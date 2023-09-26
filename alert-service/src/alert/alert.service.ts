@@ -588,7 +588,7 @@ export class AlertService {
     }
   }
 
-  @Cron('25 7 * * *', {
+  @Cron('10 8 * * *', {
     name: 'scrapper_cron',
     timeZone: 'Europe/Paris',
   })
