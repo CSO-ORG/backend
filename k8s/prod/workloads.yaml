@@ -236,7 +236,7 @@ spec:
     spec:
       containers:
         - name: gateway
-          image: dreion/k8s-cso-gateway:release-0.0.5
+          image: dreion/k8s-cso-gateway:release-0.0.6
           env:
             - name: PORT
               valueFrom:
@@ -329,7 +329,7 @@ spec:
     spec:
       containers:
         - name: account-microservice
-          image: dreion/k8s-cso-account-microservice:release-0.0.5
+          image: dreion/k8s-cso-account-microservice:release-0.0.6
           env:
             - name: SERVICE_PORT
               valueFrom:
@@ -472,7 +472,7 @@ spec:
     spec:
       containers:
         - name: alert-microservice
-          image: dreion/k8s-cso-alert-microservice:release-0.0.5
+          image: dreion/k8s-cso-alert-microservice:release-0.0.6
           env:
             - name: POSTGRES_USER
               valueFrom:
@@ -569,7 +569,7 @@ spec:
     spec:
       containers:
         - name: pet-alert-scraper
-          image: dreion/k8s-cso-pet-alert-scraper:release-0.0.5
+          image: dreion/k8s-cso-pet-alert-scraper:release-0.0.6
           env:
             - name: GATEWAY_URL
               valueFrom:

@@ -593,8 +593,10 @@ export class AlertService {
     timeZone: 'Europe/Paris',
   })
   handleCron() {
+    // call scrappers to launch scrapping
     const currentDateTime = new Date();
-    // call scrappers to launch scrapping;
+    currentDateTime.setDate(currentDateTime.getDate() - 1);
+    currentDateTime.setHours(0, 0, 0, 0);
     const url = `${SCRAPPER_URLS.petAlert}?date=${Date.parse(
       currentDateTime.toString(),
     )}`;
