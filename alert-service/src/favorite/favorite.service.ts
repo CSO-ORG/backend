@@ -63,12 +63,11 @@ export class FavoriteService {
   }
 
   async deleteFavorite(id: string, user: IUser) {
-    const foundFavorite = await this.repo.findOne({
-      where: {
-        id: id,
-        userId: user.id,
-      },
-    });
+    const foundFavorite = await this.repo
+      .createQueryBuilder('favorite')
+      .andWhere('favorite.alertId = :alertId', { alertId: id })
+      .andWhere('favorite.userId = :userId', { userId: user.id })
+      .getOne();
 
     if (!foundFavorite) {
       throw new NotFoundError(GENERIC_MESSAGE.RESOURCE_NOT_FOUND);
