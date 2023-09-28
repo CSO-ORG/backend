@@ -304,9 +304,7 @@ export class AlertService {
       // ) {
       //   await this.indexAlert(savedAlert);
       // }
-      return {
-        message: GENERIC_MESSAGE.RESOURCE_CREATED,
-      };
+      return savedAlert;
     } catch (err) {
       await queryRunner.rollbackTransaction();
       this.logger.error(`[Alert-Service - createAlert method]: ${err}`);
@@ -412,10 +410,6 @@ export class AlertService {
       });
     }
 
-    queryBuilder.andWhere('LOWER(alert.status) = :status', {
-      status: ALERT_STATUS.PUBLISHED.toLowerCase(),
-    });
-
     if (filters.breeds && filters.breeds.length > 0) {
       queryBuilder.andWhere('LOWER(alert.breed) IN (:...breeds)', {
         breeds: filters.breeds.map((b) => b.toLowerCase()),
@@ -463,6 +457,26 @@ export class AlertService {
           maxReward,
         },
       );
+    }
+
+    if (filters.publisherId) {
+      queryBuilder.andWhere('alert.publisherId = :publisherId', {
+        publisherId: filters.publisherId,
+      });
+
+      if (filters.isPublished) {
+        queryBuilder.andWhere('LOWER(alert.status) = :status', {
+          status: ALERT_STATUS.PUBLISHED.toLowerCase(),
+        });
+      } else {
+        queryBuilder.andWhere('LOWER(alert.status) = :status', {
+          status: ALERT_STATUS.IN_CREATION.toLowerCase(),
+        });
+      }
+    } else {
+      queryBuilder.andWhere('LOWER(alert.status) = :status', {
+        status: ALERT_STATUS.PUBLISHED.toLowerCase(),
+      });
     }
     return queryBuilder;
   }

@@ -71,8 +71,6 @@ export const convertPetAlertToAlert = async (
     const coords = await geocodeAddress(
       `${petAlert?.address_street} ${petAlert?.address_city_nom} ${petAlert?.address_city_CP} ${petAlert?.address_country}`,
     )
-    console.log('🚀 ~ file: scrapper.ts:74 ~ coords:', coords)
-
     petAlert.coords_lat = coords?.latitude
     petAlert.coords_lng = coords?.longitude
   }
@@ -87,7 +85,7 @@ export const convertPetAlertToAlert = async (
     alertType: 'lost_pet',
     icadIdentifier: undefined,
     petType: petAlert.animal_espece[0]?.fr,
-    specie: petAlert.animal_race[0]?.Fr,
+    specie: petAlert.animal_espece[0]?.fr,
     age: undefined,
     ageExpressedIn: undefined,
     sex: petAlert.animal_sex?.Fr,
