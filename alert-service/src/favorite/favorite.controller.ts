@@ -19,7 +19,6 @@ export class FavoriteController {
     @Payload() input: { id: string; user: IUser },
     @Ctx() context: RmqContext,
   ) {
-    console.log('====> INSIDE: ', input);
     const channel = context.getChannelRef();
     const message = context.getMessage();
     channel.ack(message);
