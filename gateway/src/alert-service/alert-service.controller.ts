@@ -24,7 +24,6 @@ import { ImportAlertsInputDto } from './dtos/input/import-alerts.input.dto';
 import { SearchAlertsInputDto } from './dtos/input/search-alerts.input.dto';
 import { UpdateAlertInputDto } from './dtos/input/update-alert.input.dto';
 import { AlertOutputDto } from './dtos/output/alert.output.dto';
-import { CreateAlertOutputDto } from './dtos/output/create-alert.output.dto';
 import { CreateFavoriteOutputDto } from './dtos/output/create-favorite.output.dto';
 import { DeleteAlertOutputDto } from './dtos/output/delete-alert.output.dto';
 import { DeleteFavoriteOutputDto } from './dtos/output/delete-favorite.output.dto';
@@ -43,7 +42,7 @@ export class AlertServiceController {
   @Post('create')
   @HttpCode(201)
   @ApiOkResponse({
-    type: CreateAlertOutputDto,
+    type: AlertOutputDto,
   })
   async createAlert(@Body() body: CreateAlertInputDto) {
     return this.sendRequest(ALERT_SERVICE_MESSAGE_PATTERN.CREATE_ALERT, body);
@@ -57,6 +56,7 @@ export class AlertServiceController {
   async getAlerts(@Body() body: GetAlertsInputDto) {
     return this.sendRequest(ALERT_SERVICE_MESSAGE_PATTERN.GET_ALL, body);
   }
+
   @Post('import-alerts')
   @HttpCode(201)
   @ApiOkResponse({
