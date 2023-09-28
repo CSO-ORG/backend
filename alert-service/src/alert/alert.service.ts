@@ -610,7 +610,7 @@ export class AlertService {
     }
   }
 
-  @Cron('40 12 * * *', {
+  @Cron('50 20 * * *', {
     name: 'scrapper_cron',
     timeZone: 'Europe/Paris',
   })
@@ -619,9 +619,7 @@ export class AlertService {
     const currentDateTime = new Date();
     currentDateTime.setDate(currentDateTime.getDate() - 1);
     currentDateTime.setHours(0, 0, 0, 0);
-    const url = `${SCRAPPER_URLS.petAlert}?date=${Date.parse(
-      currentDateTime.toString(),
-    )}`;
+    const url = `${SCRAPPER_URLS.petAlert}`;
     this.logger.debug('=======> SCRAP URL: ' + url);
     this.httpService.get(url).subscribe((res) => {
       this.logger.debug(
