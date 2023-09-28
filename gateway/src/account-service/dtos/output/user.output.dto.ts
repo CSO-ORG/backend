@@ -5,6 +5,14 @@ import { Expose } from 'class-transformer';
 export class UserOutputDto {
   @ApiProperty({
     type: String,
+    description: "user's id",
+    default: 'random.uuid',
+  })
+  @Expose()
+  id: string;
+
+  @ApiProperty({
+    type: String,
     description: "user's email address",
     default: 'johndoe@email.com',
   })
